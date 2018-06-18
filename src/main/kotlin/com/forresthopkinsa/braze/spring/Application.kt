@@ -1,9 +1,13 @@
 package com.forresthopkinsa.braze.spring
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SpringBootApplication
+@EnableJpaRepositories(basePackages = ["com.forresthopkinsa.braze.data"])
+@EntityScan("com.forresthopkinsa.braze.model")
 class Application
 
 fun main(args: Array<String>) {

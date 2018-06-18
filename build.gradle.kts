@@ -41,8 +41,12 @@ dependencies {
 
     compile("org.springframework.boot", "spring-boot-starter")
     compile("org.springframework.boot", "spring-boot-starter-web")
+    compile("org.springframework.boot", "spring-boot-starter-actuator")
+    compile("org.springframework.boot", "spring-boot-starter-data-jpa")
 
     compile("com.google.code.gson", "gson")
+
+    compile("com.h2database", "h2")
 }
 
 tasks {
