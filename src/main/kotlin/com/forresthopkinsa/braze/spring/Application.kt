@@ -11,3 +11,5 @@ fun main(args: Array<String>) {
 }
 
 const val version = "0.1-SNAPSHOT"
+const val name = "Braze"
+const val stream = "DEV"

@@ -1,5 +1,6 @@
 package com.forresthopkinsa.braze.spring
 
+import com.forresthopkinsa.braze.model.Solder.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,24 +18,24 @@ class SolderController {
     }
 
     @GetMapping("", "/")
-    fun getApi() = "API endpoint"
+    fun getApi(): API = API(name, version, stream)
 
     @GetMapping("/mod")
-    fun getMod() = "Mod endpoint"
+    fun getMod(): ModList = TODO()
 
     @GetMapping("/mod/{slug}")
-    fun getMod(@PathVariable slug: String) = "Mod endpoint: $slug"
+    fun getMod(@PathVariable slug: String): Mod = TODO()
 
     @GetMapping("/mod/{slug}/{version}")
-    fun getMod(@PathVariable slug: String, @PathVariable version: String) = "Mod endpoint: $slug, $version"
+    fun getMod(@PathVariable slug: String, @PathVariable version: String): VersionedMod = TODO()
 
     @GetMapping("/modpack")
-    fun getModpack() = "Modpack endpoint"
+    fun getModpack(): ModpackList = TODO()
 
     @GetMapping("/modpack/{slug}")
-    fun getModpack(@PathVariable slug: String) = "Modpack endpoint: $slug"
+    fun getModpack(@PathVariable slug: String): Modpack = TODO()
 
     @GetMapping("/modpack/{slug}/{build}")
-    fun getModpack(@PathVariable slug: String, @PathVariable build: String) = "Modpack endpoint: $slug, $build"
+    fun getModpack(@PathVariable slug: String, @PathVariable build: String): VersionedModpack = TODO()
 
 }
