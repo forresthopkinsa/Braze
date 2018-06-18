@@ -45,7 +45,7 @@ sealed class Solder {
         data class Modpack(
                 @SerializedName("name") val slug: String,
                 @SerializedName("display_name") val name: String,
-                @SerializedName("url") val url: String,
+                @SerializedName("url") val url: String? = null,
                 @SerializedName("icon") val icon: String,
                 @SerializedName("icon_md5") val iconHash: String,
                 @SerializedName("logo") val logo: String,
@@ -62,7 +62,7 @@ sealed class Solder {
                 /** Minecraft version to use, e.g. "1.7.10" */
                 @SerializedName("minecraft") val minecraft: String,
                 /** Java version to use, e.g. "1.8" (undocumented) */
-                @SerializedName("java") val java: String,
+                @SerializedName("java") val java: String?,
                 /** Required memory in MB (undocumented) */
                 @SerializedName("memory") val memory: String,
                 /** Probably supposed to be the forge build version, but unused */
@@ -71,7 +71,7 @@ sealed class Solder {
         )
 
         data class ListedMod(
-                @SerializedName("name") val name: String,
+                @SerializedName("name") val slug: String,
                 @SerializedName("version") val version: String,
                 @SerializedName("md5") val md5: String,
                 @SerializedName("filesize") val filesize: String,

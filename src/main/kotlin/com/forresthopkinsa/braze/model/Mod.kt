@@ -7,8 +7,9 @@ data class Mod(val slug: String,
                var link: String? = null,
                var donate: String? = null,
                var versionName: String,
-               var versionNumber: Number,
+               var versionNumber: Int,
                var forgeVersions: ClosedRange<ForgeVersion>,
                var url: String,
                var md5: String? = null,
-               var size: Int? = null)
+               var size: Int? = null,
+               var dependencies: List<Mod>)
