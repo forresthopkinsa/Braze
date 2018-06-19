@@ -4,6 +4,7 @@ import com.forresthopkinsa.braze.model.DAO.ModConverter
 import com.forresthopkinsa.braze.model.DAO.ModVersionConverter
 import com.forresthopkinsa.braze.model.Mod
 import com.forresthopkinsa.braze.model.ModVersion
+import com.forresthopkinsa.braze.model.SimpleMod
 import com.forresthopkinsa.braze.toElement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -15,12 +16,9 @@ object ModManager {
         @Autowired
         set
 
-    /**
-     * Any attached modversions are removed before saving
-     */
-    fun addMod(mod: Mod): Mod = modRepo.findBySlug(mod.slug).toElement()
+    fun addMod(simpleMod: SimpleMod): Mod = modRepo.findBySlug(simpleMod.slug).toElement()
             ?: ModConverter.run {
-                val entity = fromElement(mod.copy(versions = listOf()))
+                val entity = fromElement(simpleMod.expand())
                 return@run fromEntity(modRepo.save(entity))
             }
 

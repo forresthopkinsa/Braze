@@ -59,3 +59,5 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
+
+idea.module.inheritOutputDirs = true

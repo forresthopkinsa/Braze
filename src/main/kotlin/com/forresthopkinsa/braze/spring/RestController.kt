@@ -1,9 +1,9 @@
 package com.forresthopkinsa.braze.spring
 
 import com.forresthopkinsa.braze.data.ModManager
-import com.forresthopkinsa.braze.model.ForgeVersion
 import com.forresthopkinsa.braze.model.Mod
 import com.forresthopkinsa.braze.model.ModVersion
+import com.forresthopkinsa.braze.model.SimpleMod
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
@@ -19,26 +19,17 @@ class RestController {
     }
 
     @GetMapping("/go")
-    fun go() = ModManager.addMod(Mod(
+    fun go() = ModManager.addMod(SimpleMod(
             slug = "slug",
             name = "name",
             author = "author",
             description = "description",
             link = null,
-            donate = null,
-            versions = listOf(ModVersion(
-                    versionName = "version",
-                    versionNumber = 123,
-                    minForge = ForgeVersion.F1492,
-                    maxForge = ForgeVersion.F1558,
-                    md5 = null,
-                    size = null,
-                    dependencies = listOf()
-            ))
+            donate = null
     ))
 
     @GetMapping("/mods") // todo: allow filtering
-    fun getMods(): List<Mod> = ModManager.getAll().map { it.copy(versions = null) }
+    fun getMods(): List<SimpleMod> = ModManager.getAll().map(Mod::simplify)
 
     @GetMapping("/mods/{slug}")
     fun getMod(@PathVariable slug: String): Mod? = ModManager.getBySlug(slug) // todo: http 404
@@ -49,7 +40,7 @@ class RestController {
             ModManager.getBySlug(slug)?.versions?.firstOrNull { it.versionName == version }
 
     @PostMapping("/mods")
-    fun addMod(@RequestBody mod: Mod): Mod = ModManager.addMod(mod)
+    fun addMod(@RequestBody mod: SimpleMod): Mod = ModManager.addMod(mod)
 
     @PostMapping("/mods/{slug}")
     fun addVersion(@PathVariable slug: String,
