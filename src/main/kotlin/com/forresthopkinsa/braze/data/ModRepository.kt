@@ -13,4 +13,8 @@ interface ModRepository : JpaRepository<ModVersionEntity, Int> {
 
     fun findByParentSlugAndVersionName(slug: String, versionName: String): ModVersionEntity
 
+    fun deleteByParentSlug(slug: String): Int
+
+    fun deleteByParentSlugAndVersionName(slug: String, versionName: String): Int
+
 }
