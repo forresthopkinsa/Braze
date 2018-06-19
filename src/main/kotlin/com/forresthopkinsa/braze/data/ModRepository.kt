@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 interface ModRepository : JpaRepository<ModEntity, String> {
 
-    fun findBySlug(slug: String): ModEntity
+    fun findBySlug(slug: String): ModEntity // todo: nullable
 
     fun deleteBySlug(slug: String): Int
 

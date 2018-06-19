@@ -6,7 +6,7 @@ data class Mod(val slug: String,
                var description: String = "",
                var link: String? = null,
                var donate: String? = null,
-               var versions: List<ModVersion>) : Element
+               var versions: List<ModVersion>?) : Element
 
 data class ModVersion(var versionName: String,
                       var versionNumber: Int,

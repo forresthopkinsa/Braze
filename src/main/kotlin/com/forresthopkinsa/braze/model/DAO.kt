@@ -37,7 +37,7 @@ class DAO {
         override fun fromElement(element: Mod): ModEntity = element.run {
             ModEntity(
                     slug = slug,
-                    versions = versions.map(ModVersionConverter::fromElement),
+                    versions = versions?.map(ModVersionConverter::fromElement) ?: listOf(),
                     name = name,
                     author = author,
                     description = description,

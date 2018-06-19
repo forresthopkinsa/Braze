@@ -19,7 +19,7 @@ class RestController {
     }
 
     @GetMapping("/go")
-    fun go() = ModManager.add(Mod(
+    fun go() = ModManager.addMod(Mod(
             slug = "slug",
             name = "name",
             author = "author",
@@ -38,16 +38,20 @@ class RestController {
     ))
 
     @GetMapping("/mods") // todo: allow filtering
-    fun getMods(): List<Mod> = ModManager.getAll()
+    fun getMods(): List<Mod> = ModManager.getAll().map { it.copy(versions = null) }
 
     @GetMapping("/mods/{slug}")
     fun getMods(@PathVariable slug: String): Mod = ModManager.getBySlug(slug)
 
     @GetMapping(value = ["/mods/{slug}/{version}"])
     fun getMod(@PathVariable slug: String, @PathVariable version: String): ModVersion? =
-            ModManager.getBySlug(slug).versions.firstOrNull { it.versionName == version }
+            ModManager.getBySlug(slug).versions?.firstOrNull { it.versionName == version }
 
     @PostMapping("/mods")
-    fun addMod(@RequestBody mod: Mod): Mod = ModManager.add(mod)
+    fun addMod(@RequestBody mod: Mod): Mod = ModManager.addMod(mod)
+
+    @PostMapping("/mods/{slug}")
+    fun addVersion(@PathVariable slug: String, @RequestBody version: ModVersion): Mod? =
+            ModManager.addVersion(slug, version)
 
 }
