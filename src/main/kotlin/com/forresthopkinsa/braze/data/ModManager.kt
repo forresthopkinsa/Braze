@@ -1,9 +1,10 @@
 package com.forresthopkinsa.braze.data
 
-import com.forresthopkinsa.braze.model.DAO
 import com.forresthopkinsa.braze.model.DAO.ModConverter
+import com.forresthopkinsa.braze.model.DAO.ModVersionConverter
 import com.forresthopkinsa.braze.model.Mod
 import com.forresthopkinsa.braze.model.ModVersion
+import com.forresthopkinsa.braze.toElement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -17,22 +18,20 @@ object ModManager {
     /**
      * Any attached modversions are removed before saving
      */
-    fun addMod(mod: Mod): Mod {
-        if (exists(mod.slug)) return ModConverter.fromEntity(modRepo.findBySlug(mod.slug)) // todo: http 409
-
-        val unversioned = mod.copy(versions = listOf())
-        val entity = ModConverter.fromElement(unversioned)
-        val saved = modRepo.save(entity)
-        return ModConverter.fromEntity(saved)
-    }
+    fun addMod(mod: Mod): Mod = modRepo.findBySlug(mod.slug).toElement()
+            ?: ModConverter.run {
+                val entity = fromElement(mod.copy(versions = listOf()))
+                return@run fromEntity(modRepo.save(entity))
+            }
 
     fun addVersion(slug: String, version: ModVersion): Mod? {
         if (!exists(slug)) return null // todo: http 404
         if (exists(slug, version.versionName)) return getBySlug(slug) // todo: http 409
         // todo: check if version number is taken, and if so, shift others up
 
-        val versionEntity = DAO.ModVersionConverter.fromElement(version)
-        val mod = modRepo.findBySlug(slug)
+        val versionEntity = ModVersionConverter.fromElement(version)
+
+        val mod = modRepo.findBySlug(slug) ?: return null
         val new = mod.copy(versions = mod.versions + versionEntity)
 
         val saved = modRepo.save(new)
@@ -44,7 +43,7 @@ object ModManager {
     fun remove(slug: String, version: String): Boolean {
         if (!exists(slug, version)) return false // todo: http 404
 
-        val mod = modRepo.findBySlug(slug)
+        val mod = modRepo.findBySlug(slug) ?: return false
         val new = mod.copy(versions = mod.versions.filterNot { it.versionName == version })
         modRepo.save(new)
 
@@ -53,10 +52,12 @@ object ModManager {
 
     fun getAll(): List<Mod> = modRepo.findAll().map(ModConverter::fromEntity)
 
-    fun getBySlug(slug: String): Mod = ModConverter.fromEntity(modRepo.findBySlug(slug))
+    fun getBySlug(slug: String): Mod? = modRepo.findBySlug(slug).toElement()
 
     fun exists(slug: String): Boolean = modRepo.existsById(slug)
 
-    fun exists(slug: String, version: String) = getBySlug(slug).versions?.any { it.versionName == version } ?: false
+    fun exists(slug: String, version: String): Boolean =
+            getBySlug(slug)?.versions?.any { it.versionName == version } ?: false
 
+    private fun ModConverter.ModEntity?.toElement(): Mod? = this?.toElement(ModConverter)
 }

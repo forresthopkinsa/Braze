@@ -41,12 +41,12 @@ class RestController {
     fun getMods(): List<Mod> = ModManager.getAll().map { it.copy(versions = null) }
 
     @GetMapping("/mods/{slug}")
-    fun getMods(@PathVariable slug: String): Mod = ModManager.getBySlug(slug)
+    fun getMod(@PathVariable slug: String): Mod? = ModManager.getBySlug(slug) // todo: http 404
 
     @GetMapping(value = ["/mods/{slug}/{version}"])
     fun getMod(@PathVariable slug: String,
                @PathVariable version: String): ModVersion? =
-            ModManager.getBySlug(slug).versions?.firstOrNull { it.versionName == version }
+            ModManager.getBySlug(slug)?.versions?.firstOrNull { it.versionName == version }
 
     @PostMapping("/mods")
     fun addMod(@RequestBody mod: Mod): Mod = ModManager.addMod(mod)
