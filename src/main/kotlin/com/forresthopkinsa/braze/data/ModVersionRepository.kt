@@ -1,16 +1,10 @@
 package com.forresthopkinsa.braze.data
 
-import com.forresthopkinsa.braze.model.DAO.ModConverter.ModEntity
+import com.forresthopkinsa.braze.model.DAO.ModVersionConverter.ModVersionEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
 @Transactional
-interface ModRepository : JpaRepository<ModEntity, String> {
-
-    fun findBySlug(slug: String): ModEntity
-
-    fun deleteBySlug(slug: String): Int
-
-}
+interface ModVersionRepository : JpaRepository<ModVersionEntity, Int>

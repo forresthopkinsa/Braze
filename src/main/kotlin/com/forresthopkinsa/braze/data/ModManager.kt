@@ -8,27 +8,35 @@ import org.springframework.stereotype.Component
 @Component
 object ModManager {
 
-    lateinit var db: ModRepository
+    lateinit var modRepo: ModRepository
+        @Autowired
+        set
+
+    lateinit var versionRepo: ModVersionRepository
         @Autowired
         set
 
     fun add(mod: Mod): Mod {
-        val entity = ModConverter.fromDto(mod)
-        val saved = db.save(entity)
-        return ModConverter.fromDao(saved)
+        val entity = ModConverter.fromElement(mod)
+        val saved = modRepo.save(entity)
+        return ModConverter.fromEntity(saved)
     }
 
-    fun removeAll(slug: String): Int = db.deleteByParentSlug(slug)
+    fun remove(slug: String): Int = modRepo.deleteBySlug(slug)
 
-    fun remove(slug: String, version: String): Int = db.deleteByParentSlugAndVersionName(slug, version)
+    fun remove(slug: String, version: String): Boolean {
+        val versions = modRepo.findBySlug(slug).versions
 
-    fun getAll(): List<Mod> = db.findAll().map(ModConverter::fromDao)
-
-    fun getAll(slug: String): List<Mod> = db.findByParentSlug(slug).map(ModConverter::fromDao)
-
-    fun get(slug: String, version: String): Mod {
-        val entity = db.findByParentSlugAndVersionName(slug, version)
-        return ModConverter.fromDao(entity)
+        return versions.firstOrNull { it.versionName == version }?.let {
+            versionRepo.delete(it)
+            true
+        } ?: false
     }
+
+    fun getAll(): List<Mod> = modRepo.findAll().map(ModConverter::fromEntity)
+
+    fun getBySlug(slug: String): Mod = ModConverter.fromEntity(modRepo.findBySlug(slug))
+
+    fun exists(slug: String): Boolean = modRepo.existsById(slug)
 
 }

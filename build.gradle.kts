@@ -22,6 +22,7 @@ plugins {
 
     kotlin("jvm") version "1.2.50"
     kotlin("plugin.spring") version "1.2.50"
+    kotlin("plugin.jpa") version "1.2.50"
 
     id("org.springframework.boot") version "2.0.3.RELEASE"
     id("io.spring.dependency-management") version "1.0.5.RELEASE"

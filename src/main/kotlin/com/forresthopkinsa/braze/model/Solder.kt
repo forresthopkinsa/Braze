@@ -2,7 +2,7 @@ package com.forresthopkinsa.braze.model
 
 import com.google.gson.annotations.SerializedName
 
-sealed class Solder {
+class Solder {
 
         /** solder/api */
         data class API(
