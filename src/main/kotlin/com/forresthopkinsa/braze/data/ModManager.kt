@@ -14,10 +14,6 @@ object ModManager {
         @Autowired
         set
 
-    lateinit var versionRepo: ModVersionRepository
-        @Autowired
-        set
-
     /**
      * Any attached modversions are removed before saving
      */
@@ -46,12 +42,13 @@ object ModManager {
     fun remove(slug: String): Int = modRepo.deleteBySlug(slug)
 
     fun remove(slug: String, version: String): Boolean {
-        val versions = modRepo.findBySlug(slug).versions
+        if (!exists(slug, version)) return false // todo: http 404
 
-        return versions.firstOrNull { it.versionName == version }?.let {
-            versionRepo.delete(it)
-            true
-        } ?: false
+        val mod = modRepo.findBySlug(slug)
+        val new = mod.copy(versions = mod.versions.filterNot { it.versionName == version })
+        modRepo.save(new)
+
+        return (!exists(slug, version))
     }
 
     fun getAll(): List<Mod> = modRepo.findAll().map(ModConverter::fromEntity)

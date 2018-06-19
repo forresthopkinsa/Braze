@@ -44,14 +44,22 @@ class RestController {
     fun getMods(@PathVariable slug: String): Mod = ModManager.getBySlug(slug)
 
     @GetMapping(value = ["/mods/{slug}/{version}"])
-    fun getMod(@PathVariable slug: String, @PathVariable version: String): ModVersion? =
+    fun getMod(@PathVariable slug: String,
+               @PathVariable version: String): ModVersion? =
             ModManager.getBySlug(slug).versions?.firstOrNull { it.versionName == version }
 
     @PostMapping("/mods")
     fun addMod(@RequestBody mod: Mod): Mod = ModManager.addMod(mod)
 
     @PostMapping("/mods/{slug}")
-    fun addVersion(@PathVariable slug: String, @RequestBody version: ModVersion): Mod? =
-            ModManager.addVersion(slug, version)
+    fun addVersion(@PathVariable slug: String,
+                   @RequestBody version: ModVersion): Mod? = ModManager.addVersion(slug, version)
+
+    @DeleteMapping("/mods/{slug}")
+    fun deleteMod(@PathVariable slug: String): Boolean = ModManager.remove(slug) > 0
+
+    @DeleteMapping("/mods/{slug}/{version}")
+    fun deleteVersion(@PathVariable slug: String,
+                      @PathVariable version: String): Boolean = ModManager.remove(slug, version)
 
 }

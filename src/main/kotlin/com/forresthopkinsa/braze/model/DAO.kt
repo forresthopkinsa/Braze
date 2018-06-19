@@ -23,7 +23,7 @@ class DAO {
                 @Id
                 val slug: String,
 
-                @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+                @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
                 @JoinColumn(name = "parent")
                 val versions: List<ModVersionEntity>,
 
