@@ -16,7 +16,7 @@ data class ModVersion(var versionName: String,
                       var maxForge: ForgeVersion,
                       var md5: String? = null,
                       var size: Int? = null,
-                      var dependencies: List<Mod>) : Element
+                      var dependencies: List<SimpleModVersion>) : Element
 
 data class SimpleMod(val slug: String,
                      val name: String,
@@ -26,3 +26,6 @@ data class SimpleMod(val slug: String,
                      val donate: String?) : Element {
     fun expand() = Mod(slug, name, author, description, link, donate, emptyList())
 }
+
+data class SimpleModVersion(val slug: String,
+                            val versionName: String) : Element

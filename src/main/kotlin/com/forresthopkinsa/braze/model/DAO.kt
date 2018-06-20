@@ -2,6 +2,7 @@ package com.forresthopkinsa.braze.model
 
 import com.forresthopkinsa.braze.model.DAO.ModConverter.ModEntity
 import com.forresthopkinsa.braze.model.DAO.ModVersionConverter.ModVersionEntity
+import com.forresthopkinsa.braze.model.DAO.SimpleModVersionConverter.SimpleModVersionEntity
 import javax.persistence.*
 
 class DAO {
@@ -37,7 +38,7 @@ class DAO {
         override fun fromElement(element: Mod): ModEntity = element.run {
             ModEntity(
                     slug = slug,
-                    versions = versions?.map(ModVersionConverter::fromElement) ?: listOf(),
+                    versions = versions.map(ModVersionConverter::fromElement),
                     name = name,
                     author = author,
                     description = description,
@@ -68,6 +69,10 @@ class DAO {
                 @Id @GeneratedValue
                 val id: Int = 0,
 
+                @ElementCollection
+                @CollectionTable(name = "DEPENDENCIES", joinColumns = [JoinColumn(name = "PARENT")])
+                val dependencies: List<SimpleModVersionEntity>,
+
                 @Enumerated(EnumType.STRING)
                 var minForge: ForgeVersion,
 
@@ -88,12 +93,13 @@ class DAO {
                     maxForge = maxForge,
                     md5 = md5,
                     size = size,
-                    dependencies = listOf() // todo
+                    dependencies = dependencies.map(SimpleModVersionConverter::fromEntity)
             )
         }
 
         override fun fromElement(element: ModVersion) = element.run {
             ModVersionEntity(
+                    dependencies = dependencies.map(SimpleModVersionConverter::fromElement),
                     minForge = minForge,
                     maxForge = maxForge,
                     versionName = versionName,
@@ -102,6 +108,22 @@ class DAO {
                     size = size
             )
         }
+    }
+
+    object SimpleModVersionConverter : EntityConverter<SimpleModVersionEntity, SimpleModVersion> {
+
+        @Embeddable
+        data class SimpleModVersionEntity(val slug: String,
+                                          val versionName: String) : DataEntity
+
+        override fun fromElement(element: SimpleModVersion) = element.run {
+            SimpleModVersionEntity(slug, versionName)
+        }
+
+        override fun fromEntity(entity: SimpleModVersionEntity) = entity.run {
+            SimpleModVersion(slug, versionName)
+        }
+
     }
 
 }
