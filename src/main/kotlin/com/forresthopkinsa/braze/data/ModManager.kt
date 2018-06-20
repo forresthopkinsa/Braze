@@ -2,8 +2,8 @@ package com.forresthopkinsa.braze.data
 
 import com.forresthopkinsa.braze.model.DAO.ModConverter
 import com.forresthopkinsa.braze.model.DAO.ModVersionConverter
+import com.forresthopkinsa.braze.model.IndexedModVersion
 import com.forresthopkinsa.braze.model.Mod
-import com.forresthopkinsa.braze.model.ModVersion
 import com.forresthopkinsa.braze.model.SimpleMod
 import com.forresthopkinsa.braze.toElement
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,15 +22,15 @@ object ModManager {
                 return@run fromEntity(modRepo.save(entity))
             }
 
-    fun addVersion(slug: String, version: ModVersion): Mod? {
+    fun addVersion(slug: String, version: IndexedModVersion): Mod? {
         if (!exists(slug)) return null // todo: http 404
-        if (exists(slug, version.versionName)) return getBySlug(slug) // todo: http 409
+        if (exists(slug, version.name)) return getBySlug(slug) // todo: http 409
 
         val mod = modRepo.findBySlug(slug) ?: return null
 
         // if version is < 0 or > existing versions max, set as latest. Otherwise, insert where specified
         val versions = mod.versions.map(ModVersionConverter::fromEntity).toMutableList()
-        val index = version.versionNumber.takeUnless { it < 0 || it > versions.size } ?: versions.size
+        val index = version.index.takeUnless { it < 0 || it > versions.size } ?: versions.size
         versions.add(index, version.simplify())
 
         val new = mod.copy(versions = versions.map(ModVersionConverter::fromElement))
@@ -45,7 +45,7 @@ object ModManager {
         if (!exists(slug, version)) return false // todo: http 404
 
         val mod = modRepo.findBySlug(slug) ?: return false
-        val new = mod.copy(versions = mod.versions.filterNot { it.versionName == version })
+        val new = mod.copy(versions = mod.versions.filterNot { it.name == version })
         modRepo.save(new)
 
         return (!exists(slug, version))
@@ -58,7 +58,7 @@ object ModManager {
     fun exists(slug: String): Boolean = modRepo.existsById(slug)
 
     fun exists(slug: String, version: String): Boolean =
-            getBySlug(slug)?.versions?.any { it.versionName == version } ?: false
+            getBySlug(slug)?.versions?.any { it.name == version } ?: false
 
     private fun ModConverter.ModEntity?.toElement(): Mod? = this?.toElement(ModConverter)
 }

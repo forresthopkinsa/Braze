@@ -6,18 +6,18 @@ data class Mod(val slug: String,
                var description: String = "",
                var link: String? = null,
                var donate: String? = null,
-               var versions: List<ModVersion>) : Element {
+               var versions: List<IndexedModVersion>) : Element {
     fun simplify() = SimpleMod(slug, name, author, description, link, donate)
 }
 
-data class ModVersion(var versionName: String,
-                      var versionNumber: Int,
-                      var minForge: ForgeVersion,
-                      var maxForge: ForgeVersion,
-                      var md5: String? = null,
-                      var size: Int? = null,
-                      var dependencies: List<SimpleModVersion>) : Element {
-    fun simplify() = UnindexedModVersion(versionName, minForge, maxForge, md5, size, dependencies)
+data class IndexedModVersion(var name: String,
+                             var index: Int,
+                             var minForge: ForgeVersion,
+                             var maxForge: ForgeVersion,
+                             var md5: String? = null,
+                             var size: Int? = null,
+                             var dependencies: List<SimpleModVersion>) : Element {
+    fun simplify() = ModVersion(name, minForge, maxForge, md5, size, dependencies)
 }
 
 data class SimpleMod(val slug: String,
@@ -30,18 +30,18 @@ data class SimpleMod(val slug: String,
 }
 
 data class SimpleModVersion(val slug: String,
-                            val versionName: String) : Element
+                            val version: String) : Element
 
-data class UnindexedModVersion(var versionName: String,
-                               var minForge: ForgeVersion,
-                               var maxForge: ForgeVersion,
-                               var md5: String? = null,
-                               var size: Int? = null,
-                               var dependencies: List<SimpleModVersion>) : Element
+data class ModVersion(var name: String,
+                      var minForge: ForgeVersion,
+                      var maxForge: ForgeVersion,
+                      var md5: String? = null,
+                      var size: Int? = null,
+                      var dependencies: List<SimpleModVersion>) : Element
 
-internal fun List<UnindexedModVersion>.expand() = mapIndexed { k, v ->
-    ModVersion(v.versionName, k, v.minForge, v.maxForge, v.md5, v.size, v.dependencies)
+internal fun List<ModVersion>.expand() = mapIndexed { k, v ->
+    IndexedModVersion(v.name, k, v.minForge, v.maxForge, v.md5, v.size, v.dependencies)
 }
 
-internal fun List<ModVersion>.simplify() = sortedBy { it.versionNumber }
-        .map { UnindexedModVersion(it.versionName, it.minForge, it.maxForge, it.md5, it.size, it.dependencies) }
+internal fun List<IndexedModVersion>.simplify() = sortedBy { it.index }
+        .map { ModVersion(it.name, it.minForge, it.maxForge, it.md5, it.size, it.dependencies) }

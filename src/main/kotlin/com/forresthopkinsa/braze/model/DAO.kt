@@ -62,7 +62,7 @@ class DAO {
 
     }
 
-    object ModVersionConverter : EntityConverter<ModVersionEntity, UnindexedModVersion> {
+    object ModVersionConverter : EntityConverter<ModVersionEntity, ModVersion> {
 
         @Entity
         @Table(name = "ModVersions")
@@ -80,14 +80,14 @@ class DAO {
                 @Enumerated(EnumType.STRING)
                 var maxForge: ForgeVersion,
 
-                var versionName: String,
+                var name: String,
                 var md5: String?,
                 var size: Int?
         ) : DataEntity
 
         override fun fromEntity(entity: ModVersionEntity) = entity.run {
-            UnindexedModVersion(
-                    versionName = versionName,
+            ModVersion(
+                    name = name,
                     minForge = minForge,
                     maxForge = maxForge,
                     md5 = md5,
@@ -96,12 +96,12 @@ class DAO {
             )
         }
 
-        override fun fromElement(element: UnindexedModVersion) = element.run {
+        override fun fromElement(element: ModVersion) = element.run {
             ModVersionEntity(
                     dependencies = dependencies.map(SimpleModVersionConverter::fromElement),
                     minForge = minForge,
                     maxForge = maxForge,
-                    versionName = versionName,
+                    name = name,
                     md5 = md5,
                     size = size
             )
@@ -112,14 +112,14 @@ class DAO {
 
         @Embeddable
         data class SimpleModVersionEntity(val slug: String,
-                                          val versionName: String) : DataEntity
+                                          val version: String) : DataEntity
 
         override fun fromElement(element: SimpleModVersion) = element.run {
-            SimpleModVersionEntity(slug, versionName)
+            SimpleModVersionEntity(slug, version)
         }
 
         override fun fromEntity(entity: SimpleModVersionEntity) = entity.run {
-            SimpleModVersion(slug, versionName)
+            SimpleModVersion(slug, version)
         }
 
     }
