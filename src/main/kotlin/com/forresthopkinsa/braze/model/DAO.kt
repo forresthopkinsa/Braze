@@ -26,6 +26,7 @@ class DAO {
 
                 @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
                 @JoinColumn(name = "parent")
+                @OrderColumn(name = "index")
                 val versions: List<ModVersionEntity>,
 
                 var name: String,
@@ -38,7 +39,7 @@ class DAO {
         override fun fromElement(element: Mod): ModEntity = element.run {
             ModEntity(
                     slug = slug,
-                    versions = versions.map(ModVersionConverter::fromElement),
+                    versions = versions.simplify().map(ModVersionConverter::fromElement),
                     name = name,
                     author = author,
                     description = description,
@@ -55,13 +56,13 @@ class DAO {
                     description = description,
                     link = link,
                     donate = donate,
-                    versions = versions.map(ModVersionConverter::fromEntity)
+                    versions = versions.map(ModVersionConverter::fromEntity).expand()
             )
         }
 
     }
 
-    object ModVersionConverter : EntityConverter<ModVersionEntity, ModVersion> {
+    object ModVersionConverter : EntityConverter<ModVersionEntity, UnindexedModVersion> {
 
         @Entity
         @Table(name = "ModVersions")
@@ -80,15 +81,13 @@ class DAO {
                 var maxForge: ForgeVersion,
 
                 var versionName: String,
-                var versionNumber: Int,
                 var md5: String?,
                 var size: Int?
         ) : DataEntity
 
         override fun fromEntity(entity: ModVersionEntity) = entity.run {
-            ModVersion(
+            UnindexedModVersion(
                     versionName = versionName,
-                    versionNumber = versionNumber,
                     minForge = minForge,
                     maxForge = maxForge,
                     md5 = md5,
@@ -97,13 +96,12 @@ class DAO {
             )
         }
 
-        override fun fromElement(element: ModVersion) = element.run {
+        override fun fromElement(element: UnindexedModVersion) = element.run {
             ModVersionEntity(
                     dependencies = dependencies.map(SimpleModVersionConverter::fromElement),
                     minForge = minForge,
                     maxForge = maxForge,
                     versionName = versionName,
-                    versionNumber = versionNumber,
                     md5 = md5,
                     size = size
             )

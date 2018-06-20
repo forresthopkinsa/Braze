@@ -25,12 +25,15 @@ object ModManager {
     fun addVersion(slug: String, version: ModVersion): Mod? {
         if (!exists(slug)) return null // todo: http 404
         if (exists(slug, version.versionName)) return getBySlug(slug) // todo: http 409
-        // todo: check if version number is taken, and if so, shift others up
-
-        val versionEntity = ModVersionConverter.fromElement(version)
 
         val mod = modRepo.findBySlug(slug) ?: return null
-        val new = mod.copy(versions = mod.versions + versionEntity)
+
+        // if version is < 0 or > existing versions max, set as latest. Otherwise, insert where specified
+        val versions = mod.versions.map(ModVersionConverter::fromEntity).toMutableList()
+        val index = version.versionNumber.takeUnless { it < 0 || it > versions.size } ?: versions.size
+        versions.add(index, version.simplify())
+
+        val new = mod.copy(versions = versions.map(ModVersionConverter::fromElement))
 
         val saved = modRepo.save(new)
         return ModConverter.fromEntity(saved)
