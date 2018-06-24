@@ -26,6 +26,8 @@ plugins {
 
     id("org.springframework.boot") version "2.0.3.RELEASE"
     id("io.spring.dependency-management") version "1.0.5.RELEASE"
+
+    id("com.moowork.node") version "1.2.0"
 }
 
 val kotlinVersion: String by extra
@@ -51,6 +53,18 @@ dependencies {
 }
 
 tasks {
+    "rundev" {
+        dependsOn("npm_run_dev") // better to run this directly; gradle doesn't shutdown the server correctly
+    }
+
+    "npm_run_build" {
+        dependsOn("npm_install")
+    }
+
+    "assemble" {
+        dependsOn("npm_run_build")
+    }
+
     "install" {
         dependsOn("assemble")
     }
@@ -58,6 +72,10 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
+}
+
+node {
+    nodeModulesDir = file("${project.projectDir}/src/frontend")
 }
 
 idea.module.inheritOutputDirs = true

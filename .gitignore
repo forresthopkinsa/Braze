@@ -194,3 +194,7 @@ typings/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+### Manually ignored files
+/src/main/resources/public/
+**/*.mv.db
