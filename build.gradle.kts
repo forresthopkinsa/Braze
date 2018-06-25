@@ -57,10 +57,6 @@ tasks {
         dependsOn("npm_run_dev") // better to run this directly; gradle doesn't shutdown the server correctly
     }
 
-    "npm_run_build" {
-        dependsOn("npm_install")
-    }
-
     "assemble" {
         dependsOn("npm_run_build")
     }
