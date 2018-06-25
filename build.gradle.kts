@@ -57,6 +57,18 @@ tasks {
         dependsOn("npm_run_dev") // better to run this directly; gradle doesn't shutdown the server correctly
     }
 
+    "cleanStatic"(Delete::class) {
+        delete("src/main/resources/public")
+    }
+
+    "npm_run_build" {
+        dependsOn("cleanStatic")
+    }
+
+    "bootJar" {
+        mustRunAfter("npm_run_build")
+    }
+
     "assemble" {
         dependsOn("npm_run_build")
     }
