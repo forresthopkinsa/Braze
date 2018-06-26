@@ -52,34 +52,30 @@ dependencies {
     compile("com.h2database", "h2")
 }
 
-tasks {
-    "rundev" {
-        dependsOn("npm_run_dev") // better to run this directly; gradle doesn't shutdown the server correctly
-    }
+val bootJar by tasks.getting
+val assemble by tasks.getting
+val install by tasks.getting
+val npm_run_dev by tasks.getting
+val npm_run_build by tasks.getting
 
-    "cleanStatic"(Delete::class) {
-        delete("src/main/resources/public")
-    }
+val rundev by tasks.creating {
+    dependsOn(npm_run_dev)
+}
 
-    "npm_run_build" {
-        dependsOn("cleanStatic")
-    }
+val cleanStatic by tasks.creating(Delete::class) {
+    delete("src/main/resources/public")
+}
 
-    "bootJar" {
-        mustRunAfter("npm_run_build")
-    }
+npm_run_build.dependsOn(cleanStatic)
 
-    "assemble" {
-        dependsOn("npm_run_build")
-    }
+bootJar.mustRunAfter(npm_run_build)
 
-    "install" {
-        dependsOn("assemble")
-    }
+assemble.dependsOn(npm_run_build)
 
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
+install.dependsOn(assemble)
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 node {
