@@ -1,9 +1,7 @@
 package com.forresthopkinsa.braze.spring
 
 import com.forresthopkinsa.braze.data.ModManager
-import com.forresthopkinsa.braze.model.IndexedModVersion
-import com.forresthopkinsa.braze.model.Mod
-import com.forresthopkinsa.braze.model.SimpleMod
+import com.forresthopkinsa.braze.model.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
@@ -43,14 +41,38 @@ class RestController {
     fun addMod(@RequestBody mod: SimpleMod): Mod = ModManager.addMod(mod)
 
     @PostMapping("/mods/{slug}")
-    fun addVersion(@PathVariable slug: String,
-                   @RequestBody version: IndexedModVersion): Mod? = ModManager.addVersion(slug, version)
+    fun addModVersion(@PathVariable slug: String,
+                      @RequestBody version: IndexedModVersion): Mod? = ModManager.addVersion(slug, version)
 
     @DeleteMapping("/mods/{slug}")
     fun deleteMod(@PathVariable slug: String): Boolean = ModManager.remove(slug) > 0
 
     @DeleteMapping("/mods/{slug}/{version}")
-    fun deleteVersion(@PathVariable slug: String,
-                      @PathVariable version: String): Boolean = ModManager.remove(slug, version)
+    fun deleteModVersion(@PathVariable slug: String,
+                         @PathVariable version: String): Boolean = ModManager.remove(slug, version)
+
+    @GetMapping("/packs")
+    fun getPacks(): List<SimplePack> = TODO()
+
+    @GetMapping("/packs/{slug}")
+    fun getPack(@PathVariable slug: String): Pack? = TODO()
+
+    @GetMapping("/packs/{slug}/{version}")
+    fun getPack(@PathVariable slug: String,
+                @PathVariable version: String): PackVersion? = TODO()
+
+    @PostMapping("/packs")
+    fun addPack(@RequestBody pack: SimplePack): Pack = TODO()
+
+    @PostMapping("/packs/{slug}")
+    fun addPackVersion(@PathVariable slug: String,
+                       @RequestBody version: PackVersion): Pack? = TODO()
+
+    @DeleteMapping("/mods/{slug}")
+    fun deletePack(@PathVariable slug: String): Boolean = TODO()
+
+    @DeleteMapping("/mods/{slug}/{version}")
+    fun deletePackVersion(@PathVariable slug: String,
+                          @PathVariable version: String): Boolean = TODO()
 
 }

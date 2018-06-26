@@ -2,7 +2,11 @@ package com.forresthopkinsa.braze.model
 
 import com.forresthopkinsa.braze.model.DAO.ModConverter.ModEntity
 import com.forresthopkinsa.braze.model.DAO.ModVersionConverter.ModVersionEntity
+import com.forresthopkinsa.braze.model.DAO.PackConverter.PackEntity
+import com.forresthopkinsa.braze.model.DAO.PackVersionConverter.PackVersionEntity
 import com.forresthopkinsa.braze.model.DAO.SimpleModVersionConverter.SimpleModVersionEntity
+import com.forresthopkinsa.braze.spring.name
+import com.forresthopkinsa.braze.spring.version
 import javax.persistence.*
 
 class DAO {
@@ -19,14 +23,14 @@ class DAO {
     object ModConverter : EntityConverter<ModEntity, Mod> {
 
         @Entity
-        @Table(name = "Mods")
+        @Table(name = "MODS")
         data class ModEntity(
                 @Id
                 val slug: String,
 
                 @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
-                @JoinColumn(name = "parent")
-                @OrderColumn(name = "index")
+                @JoinColumn(name = "PARENT")
+                @OrderColumn(name = "INDEX")
                 val versions: List<ModVersionEntity>,
 
                 var name: String,
@@ -65,7 +69,7 @@ class DAO {
     object ModVersionConverter : EntityConverter<ModVersionEntity, ModVersion> {
 
         @Entity
-        @Table(name = "ModVersions")
+        @Table(name = "MODVERSIONS")
         data class ModVersionEntity(
                 @Id @GeneratedValue
                 val id: Int = 0,
@@ -120,6 +124,85 @@ class DAO {
 
         override fun fromEntity(entity: SimpleModVersionEntity) = entity.run {
             SimpleModVersion(slug, version)
+        }
+
+    }
+
+    object PackConverter : EntityConverter<PackEntity, Pack> {
+
+        @Entity
+        @Table(name = "PACKS")
+        data class PackEntity(
+                @Id
+                val slug: String,
+
+                @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+                @JoinColumn(name = "PARENT")
+                @OrderColumn(name = "INDEX")
+                val versions: List<PackVersionEntity>,
+
+                var name: String,
+                var author: String,
+                var description: String,
+                var link: String?,
+                var donate: String?) : DataEntity
+
+        override fun fromElement(element: Pack): PackEntity {
+            TODO("not implemented")
+        }
+
+        override fun fromEntity(entity: PackEntity): Pack {
+            TODO("not implemented")
+        }
+
+    }
+
+    object PackVersionConverter : EntityConverter<PackVersionEntity, PackVersion> {
+
+        @Entity
+        @Table(name = "PACKVERSIONS")
+        data class PackVersionEntity(
+                @Id @GeneratedValue
+                val id: Int = 0,
+
+                @ElementCollection
+                @CollectionTable(name = "INCLUDEDMODS", joinColumns = [JoinColumn(name = "PARENT")])
+                var modList: List<SimpleModVersionEntity>,
+
+                @Enumerated(EnumType.STRING)
+                var forgeVersion: ForgeVersion,
+
+                @Enumerated(EnumType.STRING)
+                var javaVersion: JavaVersion?,
+
+                var name: String,
+                var build: Int,
+                var recommended: Boolean,
+                var memory: Int?
+        ) : DataEntity
+
+        override fun fromElement(element: PackVersion) = element.run {
+            PackVersionEntity(
+                    modList = modList.map(SimpleModVersionConverter::fromElement),
+                    forgeVersion = forgeVersion,
+                    javaVersion = javaVersion,
+                    name = name,
+                    build = build,
+                    recommended = recommended,
+                    memory = memory
+            )
+        }
+
+        override fun fromEntity(entity: PackVersionEntity) = entity.run {
+            PackVersion(
+                    version = version,
+                    build = build,
+                    forgeVersion = forgeVersion,
+                    javaVersion = javaVersion,
+                    recommended = recommended,
+                    memory = memory,
+                    modList = modList.map(SimpleModVersionConverter::fromEntity)
+            )
         }
 
     }
