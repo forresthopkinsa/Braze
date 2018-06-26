@@ -60,15 +60,15 @@ class RestController {
 
     @GetMapping("/packs/{slug}/{version}")
     fun getPack(@PathVariable slug: String,
-                @PathVariable version: String): PackVersion? =
-            PackManager.getBySlug(slug)?.versions?.firstOrNull { it.version == version }
+                @PathVariable version: String): IndexedPackVersion? =
+            PackManager.getBySlug(slug)?.versions?.firstOrNull { it.name == version }
 
     @PostMapping("/packs")
     fun addPack(@RequestBody pack: SimplePack): Pack = PackManager.addPack(pack)
 
     @PostMapping("/packs/{slug}")
     fun addPackVersion(@PathVariable slug: String,
-                       @RequestBody version: PackVersion): Pack? = PackManager.addVersion(slug, version)
+                       @RequestBody version: IndexedPackVersion): Pack? = PackManager.addVersion(slug, version)
 
     @DeleteMapping("/packs/{slug}")
     fun deletePack(@PathVariable slug: String): Boolean = PackManager.remove(slug) > 0

@@ -5,7 +5,6 @@ import com.forresthopkinsa.braze.model.DAO.ModVersionConverter.ModVersionEntity
 import com.forresthopkinsa.braze.model.DAO.PackConverter.PackEntity
 import com.forresthopkinsa.braze.model.DAO.PackVersionConverter.PackVersionEntity
 import com.forresthopkinsa.braze.model.DAO.SimpleModVersionConverter.SimpleModVersionEntity
-import com.forresthopkinsa.braze.spring.name
 import com.forresthopkinsa.braze.spring.version
 import javax.persistence.*
 
@@ -147,12 +146,28 @@ class DAO {
                 var link: String?,
                 var donate: String?) : DataEntity
 
-        override fun fromElement(element: Pack): PackEntity {
-            TODO("not implemented")
+        override fun fromElement(element: Pack) = element.run {
+            PackEntity(
+                    slug = slug,
+                    versions = versions.simplify().map(PackVersionConverter::fromElement),
+                    name = name,
+                    author = author,
+                    description = description,
+                    link = link,
+                    donate = donate
+            )
         }
 
-        override fun fromEntity(entity: PackEntity): Pack {
-            TODO("not implemented")
+        override fun fromEntity(entity: PackEntity) = entity.run {
+            Pack(
+                    slug = slug,
+                    versions = versions.map(PackVersionConverter::fromEntity).expand(),
+                    name = name,
+                    author = author,
+                    description = description,
+                    link = link,
+                    donate = donate
+            )
         }
 
     }
@@ -176,7 +191,6 @@ class DAO {
                 var javaVersion: JavaVersion?,
 
                 var name: String,
-                var build: Int,
                 var recommended: Boolean,
                 var memory: Int?
         ) : DataEntity
@@ -187,7 +201,6 @@ class DAO {
                     forgeVersion = forgeVersion,
                     javaVersion = javaVersion,
                     name = name,
-                    build = build,
                     recommended = recommended,
                     memory = memory
             )
@@ -195,8 +208,7 @@ class DAO {
 
         override fun fromEntity(entity: PackVersionEntity) = entity.run {
             PackVersion(
-                    version = version,
-                    build = build,
+                    name = version,
                     forgeVersion = forgeVersion,
                     javaVersion = javaVersion,
                     recommended = recommended,
