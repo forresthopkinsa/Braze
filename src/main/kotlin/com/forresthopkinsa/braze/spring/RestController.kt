@@ -1,6 +1,7 @@
 package com.forresthopkinsa.braze.spring
 
 import com.forresthopkinsa.braze.data.ModManager
+import com.forresthopkinsa.braze.data.PackManager
 import com.forresthopkinsa.braze.model.*
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
@@ -52,27 +53,28 @@ class RestController {
                          @PathVariable version: String): Boolean = ModManager.remove(slug, version)
 
     @GetMapping("/packs")
-    fun getPacks(): List<SimplePack> = TODO()
+    fun getPacks(): List<SimplePack> = PackManager.getAll().map(Pack::simplify)
 
     @GetMapping("/packs/{slug}")
-    fun getPack(@PathVariable slug: String): Pack? = TODO()
+    fun getPack(@PathVariable slug: String): Pack? = PackManager.getBySlug(slug)
 
     @GetMapping("/packs/{slug}/{version}")
     fun getPack(@PathVariable slug: String,
-                @PathVariable version: String): PackVersion? = TODO()
+                @PathVariable version: String): PackVersion? =
+            PackManager.getBySlug(slug)?.versions?.firstOrNull { it.version == version }
 
     @PostMapping("/packs")
-    fun addPack(@RequestBody pack: SimplePack): Pack = TODO()
+    fun addPack(@RequestBody pack: SimplePack): Pack = PackManager.addPack(pack)
 
     @PostMapping("/packs/{slug}")
     fun addPackVersion(@PathVariable slug: String,
-                       @RequestBody version: PackVersion): Pack? = TODO()
+                       @RequestBody version: PackVersion): Pack? = PackManager.addVersion(slug, version)
 
-    @DeleteMapping("/mods/{slug}")
-    fun deletePack(@PathVariable slug: String): Boolean = TODO()
+    @DeleteMapping("/packs/{slug}")
+    fun deletePack(@PathVariable slug: String): Boolean = PackManager.remove(slug) > 0
 
-    @DeleteMapping("/mods/{slug}/{version}")
+    @DeleteMapping("/packs/{slug}/{version}")
     fun deletePackVersion(@PathVariable slug: String,
-                          @PathVariable version: String): Boolean = TODO()
+                          @PathVariable version: String): Boolean = PackManager.remove(slug, version)
 
 }
