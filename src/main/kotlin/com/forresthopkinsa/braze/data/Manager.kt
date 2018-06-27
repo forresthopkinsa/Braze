@@ -14,11 +14,17 @@ interface Manager<S : SimpleElement<S, E>,
         V : Version,
         I : IndexedVersion<V>> {
 
+    // Abstracts
+
     val db: DataRepository<N>
 
     val converter: EntityConverter<N, E>
 
     val versionConverter: EntityConverter<D, V>
+
+    fun N.setVersions(versions: List<D>): N
+
+    // Defaults
 
     fun add(simple: S): E = db.findBySlug(simple.slug).toElement()
             ?: converter.run {
@@ -43,14 +49,27 @@ interface Manager<S : SimpleElement<S, E>,
         return converter.fromEntity(saved)
     }
 
-    fun getBySlug(slug: String): E?
+    fun remove(slug: String): Int = db.deleteBySlug(slug)
 
-    fun exists(slug: String): Boolean
+    fun remove(slug: String, version: String): Boolean {
+        if (!exists(slug, version)) return false
 
-    fun exists(slug: String, version: String): Boolean
+        val entity = db.findBySlug(slug) ?: return false
+        val versions = entity.versions.map(versionConverter::fromEntity).filterNot { it.name == version }
+        val new = entity.setVersions(versions.map(versionConverter::fromElement))
+        db.save(new)
 
-    fun N.setVersions(versions: List<D>): N
+        return (!exists(slug, version))
+    }
 
+    fun getAll(): List<E> = db.findAll().map(converter::fromEntity)
+
+    fun getBySlug(slug: String): E? = db.findBySlug(slug).toElement()
+
+    fun exists(slug: String): Boolean = db.existsById(slug)
+
+    fun exists(slug: String, version: String): Boolean =
+            getBySlug(slug)?.versions?.any { it.name == version } ?: false
 
     private fun N?.toElement(): E? = this?.toElement(converter)
 

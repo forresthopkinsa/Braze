@@ -6,7 +6,7 @@ data class Mod(override val slug: String,
                var description: String = "",
                var link: String? = null,
                var donate: String? = null,
-               var versions: List<IndexedModVersion>) : Element<Mod, SimpleMod> {
+               override var versions: List<IndexedModVersion>) : Element<Mod, SimpleMod> {
     override fun simplify() = SimpleMod(slug, name, author, description, link, donate)
 }
 

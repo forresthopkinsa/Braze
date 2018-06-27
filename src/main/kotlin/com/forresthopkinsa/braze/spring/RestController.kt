@@ -18,7 +18,7 @@ class RestController {
     }
 
     @GetMapping("/go")
-    fun go() = ModManager.addMod(SimpleMod(
+    fun go() = ModManager.add(SimpleMod(
             slug = "slug",
             name = "name",
             author = "author",
@@ -39,7 +39,7 @@ class RestController {
             ModManager.getBySlug(slug)?.versions?.firstOrNull { it.name == version }
 
     @PostMapping("/mods")
-    fun addMod(@RequestBody mod: SimpleMod): Mod = ModManager.addMod(mod)
+    fun addMod(@RequestBody mod: SimpleMod): Mod = ModManager.add(mod)
 
     @PostMapping("/mods/{slug}")
     fun addModVersion(@PathVariable slug: String,
@@ -64,7 +64,7 @@ class RestController {
             PackManager.getBySlug(slug)?.versions?.firstOrNull { it.name == version }
 
     @PostMapping("/packs")
-    fun addPack(@RequestBody pack: SimplePack): Pack = PackManager.addPack(pack)
+    fun addPack(@RequestBody pack: SimplePack): Pack = PackManager.add(pack)
 
     @PostMapping("/packs/{slug}")
     fun addPackVersion(@PathVariable slug: String,

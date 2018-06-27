@@ -10,6 +10,7 @@ interface Slugged : Data {
 }
 
 interface Element<T : Element<T, U>, U : SimpleElement<U, T>> : Slugged {
+    val versions: List<IndexedVersion<*>>
     fun simplify(): U
 }
 
