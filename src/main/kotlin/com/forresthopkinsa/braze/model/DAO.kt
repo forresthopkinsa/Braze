@@ -5,7 +5,6 @@ import com.forresthopkinsa.braze.model.DAO.ModVersionConverter.ModVersionEntity
 import com.forresthopkinsa.braze.model.DAO.PackConverter.PackEntity
 import com.forresthopkinsa.braze.model.DAO.PackVersionConverter.PackVersionEntity
 import com.forresthopkinsa.braze.model.DAO.SimpleModVersionConverter.SimpleModVersionEntity
-import com.forresthopkinsa.braze.spring.version
 import javax.persistence.*
 
 class DAO {
@@ -212,7 +211,7 @@ class DAO {
 
         override fun fromEntity(entity: PackVersionEntity) = entity.run {
             PackVersion(
-                    name = version,
+                    name = name,
                     forgeVersion = forgeVersion,
                     javaVersion = javaVersion,
                     recommended = recommended,

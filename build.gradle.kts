@@ -50,6 +50,10 @@ dependencies {
     compile("com.google.code.gson", "gson")
 
     compile("com.h2database", "h2")
+
+    testCompile("org.testng", "testng", "6.14.3")
+    testCompile("org.springframework", "spring-test")
+    testCompile("org.springframework.boot", "spring-boot-starter-test")
 }
 
 val bootJar by tasks.getting
@@ -76,6 +80,10 @@ install.dependsOn(assemble)
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.withType<Test> {
+    useTestNG()
 }
 
 node {

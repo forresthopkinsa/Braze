@@ -1,5 +1,6 @@
 package com.forresthopkinsa.braze.spring
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,12 +15,15 @@ import javax.sql.DataSource
 
 @Configuration
 @EnableJpaRepositories(basePackages = ["com.forresthopkinsa.braze.data"])
-class DataConfiguration {
+class DataConfiguration(@Value("\${braze.persist}") private val persist: Boolean) {
+
+    private val url =
+            if (persist) "jdbc:h2:./braze;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;" else "jdbc:h2:mem:testdb"
 
     @Bean
     fun dataSource(): DataSource = DataSourceBuilder.create()
             .username("sa")
-            .url("jdbc:h2:./braze;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;")
+            .url(url)
             .build()
 
     @Bean

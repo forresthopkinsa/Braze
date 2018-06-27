@@ -16,6 +16,6 @@ fun main(args: Array<String>) {
     runApplication<Application>(*args)
 }
 
-const val version = "0.1-SNAPSHOT"
+const val appVersion = "0.1-SNAPSHOT"
 const val name = "Braze"
 const val stream = "DEV"
