@@ -1,43 +1,43 @@
 package com.forresthopkinsa.braze.model
 
-data class Mod(val slug: String,
-               var name: String,
+data class Mod(override val slug: String,
+               override var name: String,
                var author: String = "",
                var description: String = "",
                var link: String? = null,
                var donate: String? = null,
-               var versions: List<IndexedModVersion>) : Element {
-    fun simplify() = SimpleMod(slug, name, author, description, link, donate)
+               var versions: List<IndexedModVersion>) : Element<Mod, SimpleMod> {
+    override fun simplify() = SimpleMod(slug, name, author, description, link, donate)
 }
 
-data class IndexedModVersion(var name: String,
-                             var index: Int,
+data class IndexedModVersion(override var name: String,
+                             override var index: Int,
                              var minForge: ForgeVersion,
                              var maxForge: ForgeVersion,
                              var md5: String? = null,
                              var size: Int? = null,
-                             var dependencies: List<SimpleModVersion>) : Element {
-    fun simplify() = ModVersion(name, minForge, maxForge, md5, size, dependencies)
+                             var dependencies: List<SimpleModVersion>) : IndexedVersion<ModVersion> {
+    override fun simplify() = ModVersion(name, minForge, maxForge, md5, size, dependencies)
 }
 
-data class SimpleMod(val slug: String,
-                     val name: String,
+data class SimpleMod(override val slug: String,
+                     override val name: String,
                      val author: String,
                      val description: String,
                      val link: String?,
-                     val donate: String?) : Element {
-    fun expand() = Mod(slug, name, author, description, link, donate, emptyList())
+                     val donate: String?) : SimpleElement<SimpleMod, Mod> {
+    override fun expand() = Mod(slug, name, author, description, link, donate, emptyList())
 }
 
 data class SimpleModVersion(val slug: String,
-                            val version: String) : Element
+                            val version: String) : Data
 
-data class ModVersion(var name: String,
+data class ModVersion(override var name: String,
                       var minForge: ForgeVersion,
                       var maxForge: ForgeVersion,
                       var md5: String? = null,
                       var size: Int? = null,
-                      var dependencies: List<SimpleModVersion>) : Element
+                      var dependencies: List<SimpleModVersion>) : Version
 
 internal fun List<ModVersion>.expand() = mapIndexed { k, v ->
     IndexedModVersion(v.name, k, v.minForge, v.maxForge, v.md5, v.size, v.dependencies)

@@ -6,7 +6,7 @@ data class Pack(val slug: String,
                 var description: String = "",
                 var link: String? = null,
                 var donate: String? = null,
-                val versions: List<IndexedPackVersion>) : Element {
+                val versions: List<IndexedPackVersion>) : Data {
     fun simplify() = SimplePack(slug, name, author, description, link, donate)
 }
 
@@ -15,7 +15,7 @@ data class SimplePack(val slug: String,
                       var author: String,
                       var description: String,
                       var link: String?,
-                      var donate: String?) : Element {
+                      var donate: String?) : Data {
     fun expand() = Pack(slug, name, author, description, link, donate, emptyList())
 }
 
@@ -25,7 +25,7 @@ data class IndexedPackVersion(var name: String,
                               var javaVersion: JavaVersion?,
                               var recommended: Boolean = false,
                               var memory: Int?,
-                              var modList: List<SimpleModVersion>) : Element {
+                              var modList: List<SimpleModVersion>) : Data {
     fun simplify() = PackVersion(name, forgeVersion, javaVersion, recommended, memory, modList)
 }
 
@@ -34,7 +34,7 @@ data class PackVersion(var name: String,
                        var javaVersion: JavaVersion?,
                        var recommended: Boolean = false,
                        var memory: Int?,
-                       var modList: List<SimpleModVersion>) : Element
+                       var modList: List<SimpleModVersion>) : Data
 
 internal fun List<PackVersion>.expand() = mapIndexed { k, v ->
     IndexedPackVersion(v.name, k, v.forgeVersion, v.javaVersion, v.recommended, v.memory, v.modList)

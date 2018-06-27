@@ -1,15 +1,15 @@
 package com.forresthopkinsa.braze
 
 import com.forresthopkinsa.braze.model.DAO
-import com.forresthopkinsa.braze.model.Element
+import com.forresthopkinsa.braze.model.Data
 import com.google.gson.Gson
 
 private val gson = Gson()
 
-internal fun <T : DAO.DataEntity, U : Element> U?.toEntity(converter: DAO.EntityConverter<T, U>): T? =
+internal fun <T : DAO.DataEntity, U : Data> U?.toEntity(converter: DAO.EntityConverter<T, U>): T? =
         this?.let { converter.fromElement(it) }
 
-internal fun <T : DAO.DataEntity, U : Element> T?.toElement(converter: DAO.EntityConverter<T, U>): U? =
+internal fun <T : DAO.DataEntity, U : Data> T?.toElement(converter: DAO.EntityConverter<T, U>): U? =
         this?.let { converter.fromEntity(it) }
 
 internal fun Any.toJson(): String = gson.toJson(this)

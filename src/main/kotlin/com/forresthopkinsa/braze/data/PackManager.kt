@@ -1,6 +1,7 @@
 package com.forresthopkinsa.braze.data
 
 import com.forresthopkinsa.braze.model.DAO.PackConverter
+import com.forresthopkinsa.braze.model.DAO.PackVersionConverter
 import com.forresthopkinsa.braze.model.IndexedPackVersion
 import com.forresthopkinsa.braze.model.Pack
 import com.forresthopkinsa.braze.model.SimplePack
@@ -21,7 +22,22 @@ object PackManager {
                 return@run fromEntity(db.save(entity))
             }
 
-    fun addVersion(slug: String, version: IndexedPackVersion): Pack? = TODO()
+    fun addVersion(slug: String, version: IndexedPackVersion): Pack? {
+        if (!exists(slug)) return null
+        if (exists(slug, version.name)) return getBySlug(slug)
+
+        val pack = db.findBySlug(slug) ?: return null
+
+        // if version is < 0 or > existing versions max, set as latest. Otherwise, insert where specified
+        val versions = pack.versions.map(PackVersionConverter::fromEntity).toMutableList()
+        val index = version.index.takeUnless { it < 0 || it > versions.size } ?: versions.size
+        versions.add(index, version.simplify())
+
+        val new = pack.copy(versions = versions.map(PackVersionConverter::fromElement))
+
+        val saved = db.save(new)
+        return PackConverter.fromEntity(saved)
+    }
 
     fun remove(slug: String): Int = db.deleteBySlug(slug)
 
