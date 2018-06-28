@@ -6,12 +6,16 @@
       <v-list>
         <v-list-tile
           v-for="page in pages"
-          :key="page.title">
+          :key="page.title"
+          :to="page.url"
+          ripple >
           <v-list-tile-action>
             <v-icon>{{ page.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>{{ page.title }}</v-list-tile-title>
+            <v-list-tile-title>
+              {{ page.title }}
+            </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -27,7 +31,11 @@
 
     <v-content>
 
-      <router-view/>
+      <v-container>
+
+        <router-view/>
+
+      </v-container>
 
     </v-content>
 
@@ -50,8 +58,8 @@ export default {
     return {
       drawer: false,
       pages: [
-        { title: 'Mods', icon: 'dashboard' },
-        { title: 'Modpacks', icon: 'dashboard' }
+        { title: 'Mods', icon: 'dashboard', url: '/mods' },
+        { title: 'Modpacks', icon: 'dashboard', url: '/packs' }
       ]
     }
   }

@@ -22,21 +22,19 @@ import Vuetify from 'vuetify'
 Vue.use(Vuetify)
 
 export default {
-  name: 'ModTable',
+  name: 'PackTable',
   data () {
     return {
       mods: [],
       headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'Slug', value: 'slug' },
-        { text: 'Author', value: 'author' },
-        { text: 'Description', value: 'description' }
+        {text: 'Name', value: 'name'},
+        {text: 'Slug', value: 'slug'}
       ]
     }
   },
   mounted: function () {
     axios
-      .get('/braze/api/mods')
+      .get('/braze/api/modpacks')
       .then(it => { this.mods = it.data })
   }
 }
