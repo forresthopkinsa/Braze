@@ -3,13 +3,15 @@
     <v-navigation-drawer
       v-model="drawer"
       clipped
-      app>
+      app
+    >
       <v-list>
         <v-list-tile
           v-for="page in pages"
           :key="page.title"
           :to="page.url"
-          ripple >
+          ripple
+        >
           <v-list-tile-action>
             <v-icon>{{ page.icon }}</v-icon>
           </v-list-tile-action>
@@ -26,21 +28,19 @@
       app
       dark
       clipped-left
-      color="orange darken-3">
+      color="orange darken-3"
+    >
       <v-toolbar-side-icon @click="drawer = !drawer"/>
       <v-toolbar-title>Braze</v-toolbar-title>
     </v-toolbar>
 
-    <v-content>
-      <v-container>
-        <router-view/>
-      </v-container>
-    </v-content>
+    <router-view/>
 
     <v-footer
       app
       dark
-      color="primary">
+      color="primary"
+    >
       <v-flex text-xs-center>
         <span>Open Source</span>
       </v-flex>
@@ -50,14 +50,19 @@
 </template>
 
 <script>
+import UploadButton from 'vuetify-upload-button'
+
 export default {
   name: 'App',
+  components: {
+    'upload-btn': UploadButton
+  },
   data () {
     return {
       drawer: true,
       pages: [
-        { title: 'Mods', icon: 'folder', url: '/mods' },
-        { title: 'Packs', icon: 'apps', url: '/packs' }
+        { title: 'One', icon: 'folder', url: '/mods' },
+        { title: 'Two', icon: 'apps', url: '/packs' }
       ]
     }
   }

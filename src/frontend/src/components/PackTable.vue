@@ -2,10 +2,12 @@
   <v-data-table
     :headers="headers"
     :items="mods"
-    class="elevation-1">
+    class="elevation-1"
+  >
     <template
       slot="items"
-      slot-scope="props">
+      slot-scope="props"
+    >
       <td>{{ props.item.name }}</td>
       <td>{{ props.item.slug }}</td>
       <td>{{ props.item.author }}</td>

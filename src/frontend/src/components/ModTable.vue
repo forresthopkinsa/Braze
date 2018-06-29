@@ -1,17 +1,33 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="mods"
-    class="elevation-1">
-    <template
-      slot="items"
-      slot-scope="props">
-      <td>{{ props.item.name }}</td>
-      <td>{{ props.item.slug }}</td>
-      <td>{{ props.item.author }}</td>
-      <td>{{ props.item.description }}</td>
-    </template>
-  </v-data-table>
+  <div>
+    <v-content>
+      <v-container>
+        <v-data-table
+          :headers="headers"
+          :items="mods"
+          class="elevation-1"
+        >
+          <template
+            slot="items"
+            slot-scope="props"
+          >
+            <td>{{ props.item.name }}</td>
+            <td>{{ props.item.slug }}</td>
+            <td>{{ props.item.author }}</td>
+            <td>{{ props.item.description }}</td>
+          </template>
+        </v-data-table>
+      </v-container>
+    </v-content>
+
+    <v-btn
+      fab
+      bottom
+      right
+      fixed >
+      <v-icon>add</v-icon>
+    </v-btn>
+  </div>
 </template>
 
 <script>
@@ -41,7 +57,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
