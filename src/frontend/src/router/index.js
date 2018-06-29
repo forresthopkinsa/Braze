@@ -9,12 +9,12 @@ export default new Router({
   routes: [
     {
       path: '/mods',
-      name: 'ModTable',
+      name: 'Mods',
       component: ModTable
     },
     {
       path: '/packs',
-      name: PackTable,
+      name: 'Packs',
       component: PackTable
     }
   ]
