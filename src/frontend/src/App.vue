@@ -28,18 +28,20 @@
       app
       dark
       clipped-left
-      color="orange darken-3"
+      color="primary"
     >
       <v-toolbar-side-icon @click="drawer = !drawer"/>
       <v-toolbar-title>Braze</v-toolbar-title>
     </v-toolbar>
 
-    <router-view/>
+    <v-content>
+      <router-view/>
+    </v-content>
 
     <v-footer
       app
       dark
-      color="primary"
+      color="secondary"
     >
       <v-flex text-xs-center>
         <span>Open Source</span>
@@ -61,8 +63,8 @@ export default {
     return {
       drawer: true,
       pages: [
-        { title: 'One', icon: 'folder', url: '/mods' },
-        { title: 'Two', icon: 'apps', url: '/packs' }
+        { title: 'Mods', icon: 'folder', url: '/mods' },
+        { title: 'Packs', icon: 'apps', url: '/packs' }
       ]
     }
   }

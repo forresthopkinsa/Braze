@@ -7,10 +7,16 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
+import colors from 'vuetify/es5/util/colors'
 
 Vue.config.productionTip = false
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    'primary': colors.orange.darken2,
+    'accent': colors.blue.base
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({
