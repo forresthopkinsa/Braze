@@ -50,7 +50,7 @@
           <v-spacer/>
           <v-btn
             flat
-            @click="dialog = false"
+            @click="cancel"
           >
             Cancel
           </v-btn>
@@ -70,6 +70,8 @@
 <script>
 import axios from 'axios'
 
+const root = 'http://localhost:8081'
+
 export default {
   name: 'ModTable',
   data () {
@@ -83,21 +85,24 @@ export default {
       ],
       dialog: false,
       inputs: [
-        { icon: 'title', name: 'Name', key: 'name', value: '' },
-        { icon: 'fingerprint', name: 'Slug', key: 'slug', value: '' },
-        { icon: 'face', name: 'Author', key: 'author', value: '' },
-        { icon: 'insert_comment', name: 'Description', key: 'description', value: '' },
-        { icon: 'link', name: 'Link', key: 'link', value: '' },
-        { icon: 'attach_money', name: 'Donate', key: 'donate', value: '' }
+        { name: 'Name', key: 'name', icon: 'title', value: '' },
+        { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
+        { name: 'Author', key: 'author', icon: 'face', value: '' },
+        { name: 'Description', key: 'description', icon: 'insert_comment', value: '' },
+        { name: 'Link', key: 'link', icon: 'link', value: '' },
+        { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
       ]
     }
   },
   mounted () {
-    axios
-      .get('/braze/api/mods')
-      .then(it => { this.mods = it.data })
+    this.getMods()
   },
   methods: {
+    getMods () {
+      axios
+        .get(`${root}/braze/api/mods`)
+        .then(it => { this.mods = it.data })
+    },
     addMod () {
       this.dialog = false
       let mod = {}
@@ -107,7 +112,22 @@ export default {
         mod[input.key] = input.value
       }
 
+      this.clearForm()
       console.log(mod)
+
+      axios
+        .post(`${root}/braze/api/mods`, mod)
+        .then(it => {
+          console.log(it)
+          this.getMods()
+        })
+    },
+    cancel () {
+      this.dialog = false
+      this.clearForm()
+    },
+    clearForm () {
+      this.inputs.forEach(it => { it.value = '' })
     }
   }
 }
