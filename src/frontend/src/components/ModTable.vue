@@ -1,20 +1,34 @@
 <template>
   <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="mods"
-      class="elevation-1"
-    >
-      <template
-        slot="items"
-        slot-scope="props"
+    <v-card>
+      <v-card-title>
+        <span class="headline pa-3">Mod Library</span>
+        <v-spacer/>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+        />
+      </v-card-title>
+
+      <v-data-table
+        :loading="tableLoading"
+        :pagination.sync="pagination"
+        :search="search"
+        :headers="headers"
+        :items="truncatedMods"
       >
-        <td>{{ props.item.name }}</td>
-        <td>{{ props.item.slug }}</td>
-        <td>{{ props.item.author }}</td>
-        <td>{{ props.item.description }}</td>
-      </template>
-    </v-data-table>
+        <template
+          slot="items"
+          slot-scope="props"
+        >
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.slug }}</td>
+          <td>{{ props.item.author }}</td>
+          <td>{{ props.item.description }}</td>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <v-btn
       fab
@@ -50,20 +64,50 @@
           <v-spacer/>
           <v-btn
             flat
-            @click="cancel"
+            @click="closeDialog"
           >
             Cancel
           </v-btn>
-          <v-btn
-            flat
-            color="primary"
-            @click="addMod"
+          <v-badge
+            v-model="error"
+            left
+            color="error"
+            overlap
           >
-            Save
-          </v-btn>
+            <v-btn
+              :loading="saveLoading"
+              flat
+              color="primary"
+              @click="addMod"
+            >
+              Save
+            </v-btn>
+            <v-icon
+              slot="badge"
+              dark
+              small
+            >
+              error
+            </v-icon>
+          </v-badge>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar
+      v-model="snackbar"
+      :color="snackColor"
+      :timeout="5000"
+    >
+      {{ snackText }}
+      <v-btn
+        dark
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -71,6 +115,7 @@
 import axios from 'axios'
 
 const root = 'http://localhost:8081'
+const latency = 1600 // artifical latency
 
 export default {
   name: 'ModTable',
@@ -84,6 +129,16 @@ export default {
         { text: 'Description', value: 'description' }
       ],
       dialog: false,
+      snackbar: false,
+      snackColor: '',
+      snackText: '',
+      error: false,
+      search: '',
+      tableLoading: false,
+      saveLoading: false,
+      pagination: {
+        rowsPerPage: (document.documentElement.clientHeight >= 750) ? 10 : 5
+      },
       inputs: [
         { name: 'Name', key: 'name', icon: 'title', value: '' },
         { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
@@ -94,17 +149,39 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.getMods()
+
+  computed: {
+    // if description is more than 64 characters, truncate it
+    truncatedMods () {
+      return this.mods.map(it => {
+        if (it.description.length > 64) {
+          it.description = it.description.substring(0, 63) + '...'
+        }
+        return it
+      })
+    }
   },
+
+  mounted () {
+    this.updateTable()
+  },
+
   methods: {
-    getMods () {
+    updateTable () {
+      this.tableLoading = true
+
       axios
         .get(`${root}/braze/api/mods`)
-        .then(it => { this.mods = it.data })
+        .then(it => {
+          loadAndThen(() => {
+            this.mods = it.data
+            this.tableLoading = false
+          })
+        })
     },
+
     addMod () {
-      this.dialog = false
+      this.saveLoading = true
       let mod = {}
 
       for (let i in this.inputs) {
@@ -112,23 +189,39 @@ export default {
         mod[input.key] = input.value
       }
 
-      this.clearForm()
-      console.log(mod)
-
       axios
         .post(`${root}/braze/api/mods`, mod)
         .then(it => {
-          console.log(it)
-          this.getMods()
+          loadAndThen(() => {
+            console.log(it)
+            this.updateTable()
+            this.saveLoading = false
+            this.error = false
+            this.closeDialog()
+          })
+        })
+        .catch(it => {
+          this.saveLoading = false
+          this.error = true
+          this.snack('error', it.message)
         })
     },
-    cancel () {
+
+    closeDialog () {
       this.dialog = false
-      this.clearForm()
-    },
-    clearForm () {
       this.inputs.forEach(it => { it.value = '' })
+      this.error = false
+    },
+
+    snack (color, text) {
+      this.snackColor = color
+      this.snackText = text
+      this.snackbar = true
     }
   }
+}
+
+function loadAndThen (cb) {
+  setTimeout(cb, latency)
 }
 </script>
