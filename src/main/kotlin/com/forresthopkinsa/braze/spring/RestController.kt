@@ -3,6 +3,7 @@ package com.forresthopkinsa.braze.spring
 import com.forresthopkinsa.braze.data.ModManager
 import com.forresthopkinsa.braze.data.PackManager
 import com.forresthopkinsa.braze.model.*
+import com.forresthopkinsa.braze.services.ModService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
@@ -29,29 +30,28 @@ class RestController {
     ))
 
     @GetMapping("/mods") // todo: allow filtering
-    fun getMods(): List<SimpleMod> = ModManager.getAll().map(Mod::simplify)
+    fun getMods(): List<SimpleMod> = ModService.getSimpleMods()
 
     @GetMapping("/mods/{slug}")
-    fun getMod(@PathVariable slug: String): Mod? = ModManager.getBySlug(slug) // todo: http 404
+    fun getMod(@PathVariable slug: String): Mod? = ModService.getBySlug(slug)
 
-    @GetMapping(value = ["/mods/{slug}/{version}"])
+    @GetMapping("/mods/{slug}/{version}")
     fun getMod(@PathVariable slug: String,
-               @PathVariable version: String): IndexedModVersion? =
-            ModManager.getBySlug(slug)?.versions?.firstOrNull { it.name == version }
+               @PathVariable version: String): IndexedModVersion? = ModService.getIndexedVersion(slug, version)
 
     @PostMapping("/mods")
-    fun addMod(@RequestBody mod: SimpleMod): Mod = ModManager.add(mod)
+    fun addMod(@RequestBody mod: SimpleMod): Mod = ModService.addSimpleMod(mod)
 
     @PostMapping("/mods/{slug}")
     fun addModVersion(@PathVariable slug: String,
-                      @RequestBody version: IndexedModVersion): Mod? = ModManager.addVersion(slug, version)
+                      @RequestBody version: IndexedModVersion): Mod? = ModService.addIndexedVersion(slug, version)
 
     @DeleteMapping("/mods/{slug}")
-    fun deleteMod(@PathVariable slug: String): Boolean = ModManager.remove(slug) > 0
+    fun deleteMod(@PathVariable slug: String): Boolean = ModService.deleteBySlug(slug)
 
     @DeleteMapping("/mods/{slug}/{version}")
     fun deleteModVersion(@PathVariable slug: String,
-                         @PathVariable version: String): Boolean = ModManager.remove(slug, version)
+                         @PathVariable version: String): Boolean = ModService.deleteVersion(slug, version)
 
     @GetMapping("/packs")
     fun getPacks(): List<SimplePack> = PackManager.getAll().map(Pack::simplify)

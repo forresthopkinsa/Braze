@@ -33,7 +33,6 @@ interface Manager<S : SimpleElement<S, E>,
             }
 
     fun addVersion(slug: String, version: I): E? {
-        if (!exists(slug)) return null
         if (exists(slug, version.name)) return getBySlug(slug)
 
         val entity = db.findBySlug(slug) ?: return null
