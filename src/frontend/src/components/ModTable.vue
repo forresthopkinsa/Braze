@@ -137,7 +137,7 @@ export default {
       tableLoading: false,
       saveLoading: false,
       pagination: {
-        rowsPerPage: (document.documentElement.clientHeight >= 750) ? 10 : 5
+        rowsPerPage: (document.documentElement.clientHeight >= 850) ? 10 : 5
       },
       inputs: [
         { name: 'Name', key: 'name', icon: 'title', value: '' },

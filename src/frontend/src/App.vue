@@ -61,7 +61,7 @@ export default {
   },
   data () {
     return {
-      drawer: true,
+      drawer: (document.documentElement.clientWidth >= 1264),
       pages: [
         { title: 'Mods', icon: 'folder', url: '/mods' },
         { title: 'Packs', icon: 'apps', url: '/packs' }

@@ -1,20 +1,18 @@
 <template>
   <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="mods"
-      class="elevation-1"
+
+    <root-card
+      card-title="Pack Library"
     >
-      <template
-        slot="items"
-        slot-scope="props"
-      >
-        <td>{{ props.item.name }}</td>
-        <td>{{ props.item.slug }}</td>
-        <td>{{ props.item.author }}</td>
-        <td>{{ props.item.description }}</td>
+      <template slot-scope="props">
+        <data-table
+          :loading="loading"
+          :search="props.search"
+          :headers="headers"
+          :items="packs"
+        />
       </template>
-    </v-data-table>
+    </root-card>
 
     <v-btn
       color="accent"
@@ -29,26 +27,27 @@
 
 <script>
 import axios from 'axios'
+import RootCard from '@/components/RootCard'
+import DataTable from '@/components/DataTable'
 
 export default {
   name: 'PackTable',
+  components: { DataTable, RootCard },
   data () {
     return {
-      mods: [],
+      packs: [ { name: 'name', slug: 'slug' } ],
       headers: [
-        {text: 'Name', value: 'name'},
-        {text: 'Slug', value: 'slug'}
-      ]
+        { text: 'Name', value: 'name' },
+        { text: 'Slug', value: 'slug' }
+      ],
+      loading: false
     }
   },
   mounted: function () {
     axios
       .get('/braze/api/modpacks')
-      .then(it => { this.mods = it.data })
+      .then(it => { this.packs = it.data })
+      .catch(it => { console.log(it) })
   }
 }
 </script>
-
-<style scoped>
-
-</style>
