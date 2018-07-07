@@ -4,35 +4,28 @@
     <root-card
       card-title="Pack Library"
     >
-      <template slot-scope="props">
-        <data-table
-          :loading="loading"
-          :search="props.search"
-          :headers="headers"
-          :items="packs"
-        />
-      </template>
+      <data-table
+        slot-scope="props"
+        :loading="loading"
+        :search="props.search"
+        :headers="headers"
+        :items="packs"
+      />
     </root-card>
 
-    <v-btn
-      color="accent"
-      fab
-      bottom
-      right
-      fixed >
-      <v-icon>add</v-icon>
-    </v-btn>
+    <add-btn @click="dialog = true" />
+
   </v-container>
 </template>
 
 <script>
-import axios from 'axios'
 import RootCard from '@/components/RootCard'
 import DataTable from '@/components/DataTable'
+import AddBtn from '@/components/AddBtn'
 
 export default {
   name: 'PackTable',
-  components: { DataTable, RootCard },
+  components: { AddBtn, DataTable, RootCard },
   data () {
     return {
       packs: [ { name: 'name', slug: 'slug' } ],
@@ -40,14 +33,24 @@ export default {
         { text: 'Name', value: 'name' },
         { text: 'Slug', value: 'slug' }
       ],
-      loading: false
+      loading: false,
+      dialog: false
     }
   },
   mounted: function () {
-    axios
-      .get('/braze/api/modpacks')
-      .then(it => { this.packs = it.data })
-      .catch(it => { console.log(it) })
+    this.updateTable()
+  },
+  methods: {
+    updateTable () {
+      this.loading = true
+
+      this.getPacks(it => {
+        this.packs = it.data
+        this.loading = false
+      }, e => {
+        console.log(e)
+      })
+    }
   }
 }
 </script>
