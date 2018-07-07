@@ -33,6 +33,12 @@ Vue.mixin({
     },
     getPacks (success, error) {
       get(packs, success, error)
+    },
+    postMod (data, success, error) {
+      post(mods, data, success, error)
+    },
+    postPack (data, success, error) {
+      post(packs, data, success, error)
     }
   }
 })
@@ -48,6 +54,12 @@ new Vue({
 function get (url, success, error) {
   loadAndThen(() =>
     axios.get(url).then(success).catch(error)
+  )
+}
+
+function post (url, data, success, error) {
+  loadAndThen(() =>
+    axios.post(url, data).then(success).catch(error)
   )
 }
 
