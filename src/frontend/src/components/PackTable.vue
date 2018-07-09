@@ -5,9 +5,9 @@
       card-title="Pack Library"
     >
       <data-table
-        slot-scope="props"
+        slot-scope="card"
         :loading="tableLoading"
-        :search="props.search"
+        :search="card.search"
         :headers="headers"
         :items="packs"
       />
@@ -25,6 +25,8 @@
       @add="addPack"
     />
 
+    <snackbar v-model="snackbar" />
+
   </v-container>
 </template>
 
@@ -33,10 +35,11 @@ import RootCard from '@/components/RootCard'
 import DataTable from '@/components/DataTable'
 import AddBtn from '@/components/AddBtn'
 import AddDialog from '@/components/AddDialog'
+import Snackbar from '@/components/Snackbar'
 
 export default {
   name: 'PackTable',
-  components: { AddDialog, AddBtn, DataTable, RootCard },
+  components: { Snackbar, AddDialog, AddBtn, DataTable, RootCard },
   data () {
     return {
       packs: [ { name: 'place', slug: 'holder' } ],
@@ -55,11 +58,13 @@ export default {
         { name: 'Description', key: 'description', icon: 'insert_comment', value: '' },
         { name: 'Link', key: 'link', icon: 'link', value: '' },
         { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
-      ]
+      ],
+      snackbar: { display: false, color: 'primary', text: '[default]' }
     }
   },
   mounted: function () {
     this.updateTable()
+    this.snack('info', 'mounted')
   },
   methods: {
     updateTable () {
@@ -91,6 +96,11 @@ export default {
         this.dialogError = true
         console.log(e)
       })
+    },
+    snack (color, text) {
+      this.snackbar.color = color
+      this.snackbar.text = text
+      this.snackbar.display = true
     }
   }
 }
