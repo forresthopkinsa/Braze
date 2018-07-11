@@ -16,7 +16,6 @@
     <add-btn @click="dialog = true" />
 
     <add-dialog
-      ref="packDialog"
       v-model="dialog"
       :inputs="inputs"
       :loading="dialogLoading"
@@ -42,7 +41,7 @@ export default {
   components: { Snackbar, AddDialog, AddBtn, DataTable, RootCard },
   data () {
     return {
-      packs: [ { name: 'place', slug: 'holder' } ],
+      packs: [],
       headers: [
         { text: 'Name', value: 'name' },
         { text: 'Slug', value: 'slug' }
@@ -64,7 +63,6 @@ export default {
   },
   mounted: function () {
     this.updateTable()
-    this.snack('info', 'mounted')
   },
   methods: {
     updateTable () {
@@ -74,7 +72,8 @@ export default {
         this.packs = it.data
         this.tableLoading = false
       }, e => {
-        console.log(e)
+        this.tableLoading = false
+        this.snack('error', e.message)
       })
     },
     addPack (inputs) {
@@ -94,7 +93,7 @@ export default {
       }, e => {
         this.dialogLoading = false
         this.dialogError = true
-        console.log(e)
+        this.snack('error', e.message)
       })
     },
     snack (color, text) {
