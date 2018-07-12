@@ -10,7 +10,35 @@
         :search="card.search"
         :headers="headers"
         :items="packs"
-      />
+        @expand="expandHandler"
+      >
+        <v-card
+          slot-scope="props"
+          flat
+          dark
+        >
+          <v-progress-linear
+            :active="versionsLoading[props.index]"
+            class="ma-0"
+            height="3"
+            indeterminate
+          />
+          <v-layout row>
+            <v-flex xs7>
+              <v-card-title class="subheader">
+                {{ props }}
+              </v-card-title>
+            </v-flex>
+            <v-flex xs5>
+              <v-data-table
+                :items="versions[props.index]"
+                hide-actions
+                hide-headers
+              />
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </data-table>
     </root-card>
 
     <add-btn @click="dialog = true" />
@@ -58,7 +86,9 @@ export default {
         { name: 'Link', key: 'link', icon: 'link', value: '' },
         { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
       ],
-      snackbar: { display: false, color: 'primary', text: '[default]' }
+      snackbar: { display: false, color: 'primary', text: '[default]' },
+      versionsLoading: {},
+      versions: {}
     }
   },
   mounted: function () {
@@ -74,6 +104,18 @@ export default {
       }, e => {
         this.tableLoading = false
         this.snack('error', e.message)
+      })
+    },
+    expandHandler (expansion) {
+      let index = expansion.index
+      this.versionsLoading[index] = true
+
+      this.getMod(expansion.slug, it => {
+        console.log(it)
+        this.versions[index] = it.data.versions
+        this.versionsLoading[index] = false
+      }, e => {
+        console.log(e)
       })
     },
     addPack (inputs) {

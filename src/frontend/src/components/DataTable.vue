@@ -5,6 +5,7 @@
     :search="search"
     :headers="headers"
     :items="truncatedItems"
+    item-key="slug"
   >
     <template
       slot="items"
@@ -13,9 +14,16 @@
       <td
         v-for="header in headers"
         :key="header.value"
+        @click="expand(props)"
       >
         {{ props.item[header.value] }}
       </td>
+    </template>
+    <template
+      slot="expand"
+      slot-scope="props"
+    >
+      <slot v-bind="props" />
     </template>
   </v-data-table>
 </template>
@@ -36,9 +44,9 @@ export default {
       type: Array,
       default: () => [ { text: 'text', value: 'value' } ]
     },
-    items: {
+    items: { // depends on these objects having a 'slug' field; description will be truncated IF it's supplied
       type: Array,
-      default: () => [ { name: 'name', key: 'key', icon: 'icon', value: 'value' } ]
+      default: () => [ { slug: 'slug', name: 'name', author: 'author', description: 'description' } ]
     }
   },
   data () {
@@ -57,6 +65,13 @@ export default {
         }
         return it
       })
+    }
+  },
+  methods: {
+    expand (scope) {
+      scope.expanded = !scope.expanded
+      console.log(scope)
+      this.$emit('expand', { index: scope.index, slug: scope.item.slug, expanded: scope.expanded })
     }
   }
 }

@@ -31,6 +31,9 @@ Vue.mixin({
     getMods (success, error) {
       get(mods, success, error)
     },
+    getMod (slug, success, error) {
+      get(`${mods}/${slug}`, success, error)
+    },
     getPacks (success, error) {
       get(packs, success, error)
     },
