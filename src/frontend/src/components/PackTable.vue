@@ -24,17 +24,30 @@
             indeterminate
           />
           <v-layout row>
-            <v-flex xs7>
+            <v-flex xs8>
               <v-card-title class="subheader">
                 {{ props }}
               </v-card-title>
             </v-flex>
-            <v-flex xs5>
-              <v-data-table
-                :items="versions[props.index]"
-                hide-actions
-                hide-headers
-              />
+            <v-flex xs4>
+              <v-list>
+                <v-list-tile
+                  v-for="version in versions[props.index]"
+                  :key="version.index"
+                >
+                  <v-list-tile-content>
+                    <v-list-tile-title v-text="version.name" />
+                  </v-list-tile-content>
+                  <v-list-tile-action>
+                    <v-btn
+                      icon
+                      ripple
+                    >
+                      <v-icon>edit</v-icon>
+                    </v-btn>
+                  </v-list-tile-action>
+                </v-list-tile>
+              </v-list>
             </v-flex>
           </v-layout>
         </v-card>
@@ -87,8 +100,8 @@ export default {
         { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
       ],
       snackbar: { display: false, color: 'primary', text: '[default]' },
-      versionsLoading: {},
-      versions: {}
+      versionsLoading: [],
+      versions: []
     }
   },
   mounted: function () {
@@ -108,12 +121,12 @@ export default {
     },
     expandHandler (expansion) {
       let index = expansion.index
-      this.versionsLoading[index] = true
+      this.$set(this.versionsLoading, index, true)
 
       this.getMod(expansion.slug, it => {
         console.log(it)
-        this.versions[index] = it.data.versions
-        this.versionsLoading[index] = false
+        this.$set(this.versions, index, it.data.versions)
+        this.versionsLoading.splice(index, 1, false)
       }, e => {
         console.log(e)
       })
