@@ -12,47 +12,26 @@
         :items="packs"
         @expand="expandHandler"
       >
-        <v-card
+        <expand-details
           slot-scope="props"
-          flat
-          dark
-        >
-          <v-progress-linear
-            :active="versionsLoading[props.index]"
-            class="ma-0"
-            height="3"
-            indeterminate
-          />
-          <v-layout row>
-            <v-flex xs8>
-              <v-card-title class="subheader">
-                {{ props }}
-              </v-card-title>
-            </v-flex>
-            <v-flex xs4>
-              <v-list>
-                <v-list-tile
-                  v-for="version in versions[props.index]"
-                  :key="version.index"
-                >
-                  <v-list-tile-content>
-                    <v-list-tile-title v-text="version.name" />
-                  </v-list-tile-content>
-                  <v-list-tile-action>
-                    <v-btn
-                      icon
-                      ripple
-                    >
-                      <v-icon>edit</v-icon>
-                    </v-btn>
-                  </v-list-tile-action>
-                </v-list-tile>
-              </v-list>
-            </v-flex>
-          </v-layout>
-        </v-card>
+          :row-data="props.item"
+          :loading="versionsLoading[props.index]"
+          :versions="versions[props.index]"
+          @edit="editVersion"
+        />
       </data-table>
     </root-card>
+
+    <v-dialog
+      v-model="addVersionDialog"
+      width="50%"
+    >
+      <v-card>
+        <v-card-title class="title">
+          {{ addVersionDialogText }}
+        </v-card-title>
+      </v-card>
+    </v-dialog>
 
     <add-btn @click="dialog = true" />
 
@@ -76,12 +55,15 @@ import DataTable from '@/components/DataTable'
 import AddBtn from '@/components/AddBtn'
 import AddDialog from '@/components/AddDialog'
 import Snackbar from '@/components/Snackbar'
+import ExpandDetails from '@/components/ExpandDetails'
 
 export default {
   name: 'PackTable',
-  components: { Snackbar, AddDialog, AddBtn, DataTable, RootCard },
+  components: { ExpandDetails, Snackbar, AddDialog, AddBtn, DataTable, RootCard },
   data () {
     return {
+      addVersionDialog: false,
+      addVersionDialogText: '',
       packs: [],
       headers: [
         { text: 'Name', value: 'name' },
@@ -108,6 +90,10 @@ export default {
     this.updateTable()
   },
   methods: {
+    editVersion (version) {
+      this.addVersionDialog = true
+      this.addVersionDialogText = version.name
+    },
     updateTable () {
       this.tableLoading = true
 
@@ -123,7 +109,7 @@ export default {
       let index = expansion.index
       this.$set(this.versionsLoading, index, true)
 
-      this.getMod(expansion.slug, it => {
+      this.getMod(expansion.slug, it => { // yes this is getting mod when it should be getting pack; only for testing
         console.log(it)
         this.$set(this.versions, index, it.data.versions)
         this.versionsLoading.splice(index, 1, false)
