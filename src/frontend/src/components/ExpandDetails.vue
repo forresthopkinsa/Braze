@@ -32,7 +32,7 @@
             :key="version.index"
           >
             <v-list-tile-content>
-              <v-list-tile-title v-text="version.name" />
+              {{ version.name }}
             </v-list-tile-content>
             <v-list-tile-action>
               <v-btn
@@ -43,6 +43,16 @@
                 <v-icon>edit</v-icon>
               </v-btn>
             </v-list-tile-action>
+          </v-list-tile>
+          <v-list-tile>
+            <v-spacer />
+            <v-btn
+              outline
+              @click="$emit('add')"
+            >
+              add version
+            </v-btn>
+            <v-spacer />
           </v-list-tile>
         </v-list>
       </v-flex>

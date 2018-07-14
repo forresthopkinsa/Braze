@@ -17,7 +17,7 @@
           :row-data="props.item"
           :loading="versionsLoading[props.index]"
           :versions="versions[props.index]"
-          @edit="editVersion"
+          @edit="editVersion(props.item.slug, $event)"
         />
       </data-table>
     </root-card>
@@ -28,8 +28,21 @@
     >
       <v-card>
         <v-card-title class="title">
-          {{ addVersionDialogText }}
+          Edit Version
         </v-card-title>
+        <v-form class="pa-4">
+          <v-text-field
+            key="name"
+            prepend-icon="title"
+            placeholder="Name"
+          />
+          <v-range-slider
+            :tick-labels="['one', 'two']"
+            :value="[0, 1]"
+            min="0"
+            max="4"
+          />
+        </v-form>
       </v-card>
     </v-dialog>
 
@@ -90,9 +103,9 @@ export default {
     this.updateTable()
   },
   methods: {
-    editVersion (version) {
+    editVersion (slug, version) {
       this.addVersionDialog = true
-      this.addVersionDialogText = version.name
+      this.addVersionDialogText = slug + JSON.stringify(version)
     },
     updateTable () {
       this.tableLoading = true
