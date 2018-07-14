@@ -19,6 +19,12 @@ class RestController {
         log.info("Braze API controller initializing...")
     }
 
+    class Constants(
+            val forge: List<ForgeVersion.ForgeConstant>,
+            val game: List<GameVersion.GameConstant>,
+            val java: List<JavaVersion.JavaConstant>
+    )
+
     @GetMapping("/go")
     fun go() = ModManager.add(SimpleMod(
             slug = "slug",
@@ -28,6 +34,9 @@ class RestController {
             link = null,
             donate = null
     ))
+
+    @GetMapping("/constants")
+    fun getConstants() = Constants(ForgeVersion.constants(), GameVersion.constants(), JavaVersion.constants())
 
     @GetMapping("/mods") // todo: allow filtering
     fun getMods(): List<SimpleMod> = ModService.getSimpleMods()

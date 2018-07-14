@@ -8,5 +8,13 @@ enum class GameVersion(val number: String) {
     M177("1.7.7"),
     M178("1.7.8"),
     M179("1.7.9"),
-    M1710("1.7.10")
+    M1710("1.7.10");
+
+    data class GameConstant(val name: String, val number: String)
+
+    fun toConstant() = GameConstant(name, number)
+
+    companion object {
+        fun constants() = values().map(GameVersion::toConstant)
+    }
 }
