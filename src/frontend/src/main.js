@@ -12,6 +12,7 @@ import axios from 'axios'
 
 const url = 'http://localhost:8081'
 const root = url + '/braze/api/'
+const constants = root + 'constants'
 const mods = root + 'mods'
 const packs = root + 'packs'
 
@@ -28,11 +29,17 @@ Vue.use(Vuetify, {
 
 Vue.mixin({
   methods: {
+    getConstants (success, error) {
+      get(constants, success, error)
+    },
     getMods (success, error) {
       get(mods, success, error)
     },
     getMod (slug, success, error) {
       get(`${mods}/${slug}`, success, error)
+    },
+    getPack (slug, success, error) {
+      get(`${packs}/${slug}`, success, error)
     },
     getPacks (success, error) {
       get(packs, success, error)

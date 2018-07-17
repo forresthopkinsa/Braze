@@ -18,6 +18,7 @@
           :loading="versionsLoading[props.index]"
           :versions="versions[props.index]"
           @edit="editVersion(props.item.slug, $event)"
+          @add="addVersionDialog = true"
         />
       </data-table>
     </root-card>
@@ -28,7 +29,7 @@
     >
       <v-card>
         <v-card-title class="title">
-          Edit Version
+          Add Version
         </v-card-title>
         <v-form class="pa-4">
           <v-text-field
@@ -37,8 +38,9 @@
             placeholder="Name"
           />
           <v-range-slider
-            :tick-labels="['one', 'two']"
+            :tick-labels="forgeVersions"
             :value="[0, 1]"
+            label="Forge Versions"
             min="0"
             max="4"
           />
@@ -96,16 +98,25 @@ export default {
       ],
       snackbar: { display: false, color: 'primary', text: '[default]' },
       versionsLoading: [],
-      versions: []
+      versions: [],
+      constants: {},
+      forgeVersions: ['undefined']
     }
   },
   mounted: function () {
     this.updateTable()
+    this.getConstants(it => {
+      this.constants = it.data
+      this.forgeVersions = this.constants.forge.map(it => it.build)
+      console.log(it.data)
+    }, e => {
+      console.log(e)
+    })
   },
   methods: {
     editVersion (slug, version) {
       this.addVersionDialog = true
-      this.addVersionDialogText = slug + JSON.stringify(version)
+      console.log(version)
     },
     updateTable () {
       this.tableLoading = true
@@ -122,7 +133,7 @@ export default {
       let index = expansion.index
       this.$set(this.versionsLoading, index, true)
 
-      this.getMod(expansion.slug, it => { // yes this is getting mod when it should be getting pack; only for testing
+      this.getPack(expansion.slug, it => {
         console.log(it)
         this.$set(this.versions, index, it.data.versions)
         this.versionsLoading.splice(index, 1, false)
