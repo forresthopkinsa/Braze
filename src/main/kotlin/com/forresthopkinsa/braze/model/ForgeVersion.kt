@@ -8,7 +8,18 @@ enum class ForgeVersion(val build: Int, val gameVersion: GameVersion) {
 
     F1388(1388, M1710),
     F1492(1492, M1710),
-    F1558(1558, M1710);
+    F1558(1558, M1710),
+
+    F1237(1237, M180),
+    F1563(1563, M180),
+    F1577(1577, M180),
+
+    F1575(1575, M188),
+    F1655(1655, M188),
+
+    F1656(1656, M189),
+    F1722(1722, M189),
+    F2318(2318, M189);
 
     data class ForgeConstant(val name: String, val build: Int, val gameVersion: GameConstant)
 

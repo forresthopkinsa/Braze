@@ -26,6 +26,7 @@
     <v-dialog
       v-model="addVersionDialog"
       width="50%"
+      persistent
     >
       <v-card>
         <v-card-title class="title">
@@ -38,13 +39,62 @@
             placeholder="Name"
           />
           <v-range-slider
-            :tick-labels="forgeVersions"
+            :tick-labels="gameVersions"
             :value="[0, 1]"
-            label="Forge Versions"
-            min="0"
-            max="4"
+            :max="gameVersions.length - 1"
+            v-model="selectedVersions"
+            label="Game Versions"
           />
+          <v-layout justify-space-around>
+            <v-flex xs3>
+              <v-autocomplete
+                :items="minForgeVersions"
+                v-model="minForge"
+                label="Min Forge"
+                clearable
+              />
+            </v-flex>
+            <v-flex xs3>
+              <v-autocomplete
+                :items="maxForgeVersions"
+                v-model="maxForge"
+                label="Max Forge"
+                clearable
+              />
+            </v-flex>
+          </v-layout>
         </v-form>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn
+            flat
+            @click="addVersionDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-badge
+            v-model="error"
+            left
+            color="error"
+            overlap
+          >
+            <v-btn
+              :loading="loading"
+              flat
+              color="primary"
+              @click="addVersionDialog = false"
+            >
+              Save
+            </v-btn>
+            <v-icon
+              slot="badge"
+              dark
+              small
+            >
+              error
+            </v-icon>
+          </v-badge>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -99,16 +149,41 @@ export default {
       snackbar: { display: false, color: 'primary', text: '[default]' },
       versionsLoading: [],
       versions: [],
-      constants: {},
-      forgeVersions: ['undefined']
+      constants: { forge: [], game: [], java: [] },
+      selectedVersions: [0, 1],
+      minForge: 0,
+      maxForge: 9999
+    }
+  },
+  computed: {
+    gameVersions () {
+      return toProps(this.constants.game, 'number')
+    },
+    forgeVersionsAvailable () {
+      let ret = this.constants.forge.filter(it =>
+        toProps(this.selectedGameVersions, 'name').includes(it.gameVersion.name)
+      )
+      console.log('forge versions avail: ' + JSON.stringify(ret))
+      return toProps(ret, 'build').sort()
+    },
+    minForgeVersions () {
+      return this.forgeVersionsAvailable.filter(it => it <= this.maxForge)
+    },
+    maxForgeVersions () {
+      return this.forgeVersionsAvailable.filter(it => it >= this.minForge)
+    },
+    selectedGameVersions () {
+      let min = this.selectedVersions[0]
+      let max = this.selectedVersions[1]
+      let ret = this.constants.game.slice(min, max + 1)
+      console.log('selected versions: ' + JSON.stringify(ret))
+      return ret
     }
   },
   mounted: function () {
     this.updateTable()
     this.getConstants(it => {
       this.constants = it.data
-      this.forgeVersions = this.constants.forge.map(it => it.build)
-      console.log(it.data)
     }, e => {
       console.log(e)
     })
@@ -116,7 +191,6 @@ export default {
   methods: {
     editVersion (slug, version) {
       this.addVersionDialog = true
-      console.log(version)
     },
     updateTable () {
       this.tableLoading = true
@@ -134,7 +208,6 @@ export default {
       this.$set(this.versionsLoading, index, true)
 
       this.getPack(expansion.slug, it => {
-        console.log(it)
         this.$set(this.versions, index, it.data.versions)
         this.versionsLoading.splice(index, 1, false)
       }, e => {
@@ -151,7 +224,7 @@ export default {
       }
 
       this.postPack(pack, it => {
-        console.log(it)
+        // console.log(it)
         this.updateTable()
         this.dialogLoading = false
         this.dialog = false
@@ -167,5 +240,9 @@ export default {
       this.snackbar.display = true
     }
   }
+}
+
+function toProps (arr, prop) {
+  return arr.map(it => it[prop])
 }
 </script>
