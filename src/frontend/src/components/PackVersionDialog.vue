@@ -15,27 +15,29 @@
           prepend-icon="title"
           placeholder="Version Name"
         />
-        <v-range-slider
-          :tick-labels="gameVersions"
-          :value="[0, 1]"
-          :max="gameVersions.length - 1"
-          v-model="selectedVersions"
-          label="Game Versions"
-        />
         <v-layout justify-space-around>
           <v-flex xs3>
-            <v-autocomplete
-              :items="minForgeVersions"
-              v-model="minForge"
-              label="Min Forge"
+            <v-select
+              :items="constants.game"
+              v-model="selectedGame"
+              item-text="number"
+              item-value="name"
+              label="Game Version"
               clearable
             />
           </v-flex>
           <v-flex xs3>
             <v-autocomplete
-              :items="maxForgeVersions"
-              v-model="maxForge"
-              label="Max Forge"
+              :items="forgeVersionsAvailable"
+              v-model="selectedForge"
+              label="Forge Version"
+              clearable
+            />
+          </v-flex>
+          <v-flex xs3>
+            <v-select
+              :items="javaVersions"
+              label="Java version"
               clearable
             />
           </v-flex>
@@ -59,7 +61,7 @@
             :loading="loading"
             flat
             color="primary"
-            @click="$emit('add')"
+            @click="log(packVersion)"
           >
             Save
           </v-btn>
@@ -103,39 +105,50 @@ export default {
   },
   data () {
     return {
-      selectedVersions: [0, 1],
-      minForge: 0,
-      maxForge: 9999
+      versionName: '',
+      selectedGame: '',
+      selectedForge: 0
     }
   },
   computed: {
-    gameVersions () {
-      return toProps(this.constants.game, 'number')
+    javaVersions () {
+      return toProps(this.constants.java, 'version')
     },
     forgeVersionsAvailable () {
-      let ret = this.constants.forge.filter(it =>
-        toProps(this.selectedGameVersions, 'name').includes(it.gameVersion.name)
-      )
+      let gameVersion = this.selectedGame
+      let matches = function (it) {
+        if (gameVersion === null || gameVersion.length === 0) {
+          return true
+        } else {
+          return gameVersion === it.gameVersion.name
+        }
+      }
+
+      let ret = this.constants.forge.filter(matches)
       console.log('forge versions avail: ' + JSON.stringify(ret))
       return toProps(ret, 'build').sort()
     },
-    minForgeVersions () {
-      return this.forgeVersionsAvailable.filter(it => it <= this.maxForge)
-    },
-    maxForgeVersions () {
-      return this.forgeVersionsAvailable.filter(it => it >= this.minForge)
-    },
-    selectedGameVersions () {
-      let min = this.selectedVersions[0]
-      let max = this.selectedVersions[1]
-      let ret = this.constants.game.slice(min, max + 1)
-      console.log('selected versions: ' + JSON.stringify(ret))
-      return ret
+    packVersion () {
+      let obj = {
+        'name': null,
+        'index': null,
+        'forgeVersion': null,
+        'javaVersion': null,
+        'recommended': null,
+        'memory': null,
+        'modlist': []
+      }
+      obj.name = this.versionName
+
+      return obj
     }
   },
   methods: {
     close () {
       this.$emit('input', false)
+    },
+    log (msg) {
+      console.log(msg)
     }
   }
 }
