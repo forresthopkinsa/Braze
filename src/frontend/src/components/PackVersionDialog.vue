@@ -42,6 +42,15 @@
             />
           </v-flex>
         </v-layout>
+        <v-slider
+          :tick-labels="ramTicks"
+          :max="8096"
+          label="RAM Requirement"
+          step="512"
+          tick-size="0"
+          ticks="always"
+          thumb-label
+        />
       </v-form>
       <v-card-actions>
         <v-spacer/>
@@ -107,7 +116,18 @@ export default {
     return {
       versionName: '',
       selectedGame: '',
-      selectedForge: 0
+      selectedForge: 0,
+      ramTicks: [
+        'Any', '',
+        '1 GiB', '',
+        '2 GiB', '',
+        '3 GiB', '',
+        '4 GiB', '',
+        '5 GiB', '',
+        '6 GiB', '',
+        '7 GiB', '',
+        '8 GiB'
+      ]
     }
   },
   computed: {
