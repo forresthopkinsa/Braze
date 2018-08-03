@@ -61,6 +61,9 @@
           ticks="always"
           thumb-label
         />
+        <included-list
+          :items="[ { name: 'na', version: 've' } ]"
+        />
       </v-form>
       <v-card-actions>
         <v-spacer/>
@@ -98,8 +101,11 @@
 </template>
 
 <script>
+import IncludedList from '@/components/IncludedList'
+
 export default {
   name: 'PackVersionDialog',
+  components: { IncludedList },
   props: {
     value: {
       type: Boolean,
