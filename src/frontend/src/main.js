@@ -10,7 +10,7 @@ import router from './router'
 import colors from 'vuetify/es5/util/colors'
 import axios from 'axios'
 
-const url = 'http://localhost:8081'
+const url = location.protocol + '//' + location.hostname + ':8081'
 const root = url + '/braze/api/'
 const constants = root + 'constants'
 const mods = root + 'mods'

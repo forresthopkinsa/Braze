@@ -10,12 +10,22 @@
         {{ title }}
       </v-card-title>
       <v-form class="pa-4">
-        <v-text-field
-          key="name"
-          prepend-icon="title"
-          placeholder="Version Name"
-        />
-        <v-layout justify-space-around>
+        <v-layout justify-space-between>
+          <v-flex xs8>
+            <v-text-field
+              key="name"
+              prepend-icon="title"
+              placeholder="Version Name"
+            />
+          </v-flex>
+          <v-spacer/>
+          <v-flex>
+            <v-switch
+              label="Recommended"
+            />
+          </v-flex>
+        </v-layout>
+        <v-layout justify-space-between>
           <v-flex xs3>
             <v-select
               :items="constants.game"
