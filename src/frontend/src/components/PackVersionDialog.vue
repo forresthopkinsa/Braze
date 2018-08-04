@@ -61,6 +61,34 @@
           ticks="always"
           thumb-label
         />
+        <v-layout justify-space-between>
+          <v-flex xs6>
+            <v-autocomplete
+              :items="mods"
+              v-model="selectedMod"
+              item-text="name"
+              item-value="slug"
+              label="Mod"
+              @input="updateVersions"
+            />
+          </v-flex>
+          <v-flex xs4>
+            <v-select
+              :items="modVersions"
+              label="Version"
+              item-text="name"
+              return-object
+            />
+          </v-flex>
+          <v-flex xs1>
+            <v-btn
+              icon
+              ripple
+            >
+              <v-icon>add_circle_outline</v-icon>
+            </v-btn>
+          </v-flex>
+        </v-layout>
         <included-list
           :items="[ { name: 'na', version: 've' } ]"
         />
@@ -143,7 +171,10 @@ export default {
         '6 GiB', '',
         '7 GiB', '',
         '8 GiB'
-      ]
+      ],
+      selectedMod: {},
+      mods: [],
+      modVersions: []
     }
   },
   computed: {
@@ -161,7 +192,7 @@ export default {
       }
 
       let ret = this.constants.forge.filter(matches)
-      console.log('forge versions avail: ' + JSON.stringify(ret))
+      // console.log('forge versions avail: ' + JSON.stringify(ret))
       return toProps(ret, 'build').sort()
     },
     packVersion () {
@@ -179,7 +210,24 @@ export default {
       return obj
     }
   },
+  mounted: function () {
+    this.getMods(it => {
+      // console.log(it.data)
+      this.mods = it.data
+    }, e => {
+      console.log(e)
+    })
+  },
   methods: {
+    updateVersions () {
+      console.log(this.selectedMod)
+      this.getMod(this.selectedMod, it => {
+        console.log(it.data)
+        this.modVersions = it.data.versions
+      }, e => {
+        console.log(e)
+      })
+    },
     close () {
       this.$emit('input', false)
     },
