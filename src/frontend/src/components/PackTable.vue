@@ -27,6 +27,7 @@
       :constants="constants"
       v-model="addVersionDialog"
       title="Add version"
+      @snack="snack('error', $event)"
     />
 
     <add-btn @click="dialog = true" />

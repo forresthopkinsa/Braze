@@ -75,6 +75,9 @@
           <v-flex xs4>
             <v-select
               :items="modVersions"
+              :loading="versionLoading"
+              :disabled="versionLoading"
+              v-model="selectedVersion"
               label="Version"
               item-text="name"
               return-object
@@ -84,13 +87,15 @@
             <v-btn
               icon
               ripple
+              @click="addMod"
             >
               <v-icon>add_circle_outline</v-icon>
             </v-btn>
           </v-flex>
         </v-layout>
         <included-list
-          :items="[ { name: 'na', version: 've' } ]"
+          :items="modVersionsIncluded"
+          @delete="delMod"
         />
       </v-form>
       <v-card-actions>
@@ -173,8 +178,11 @@ export default {
         '8 GiB'
       ],
       selectedMod: {},
+      selectedVersion: {},
       mods: [],
-      modVersions: []
+      modVersions: [],
+      versionLoading: false,
+      modVersionsIncluded: []
     }
   },
   computed: {
@@ -220,13 +228,29 @@ export default {
   },
   methods: {
     updateVersions () {
-      console.log(this.selectedMod)
+      this.selectedVersion = {}
+      this.versionLoading = true
       this.getMod(this.selectedMod, it => {
-        console.log(it.data)
+        // console.log(it.data)
         this.modVersions = it.data.versions
+        this.versionLoading = false
       }, e => {
         console.log(e)
+        this.versionLoading = false
       })
+    },
+    addMod () {
+      let mod = this.selectedMod
+      let ver = this.selectedVersion
+      if (this.modVersionsIncluded.some(it => it.slug === mod)) {
+        this.$emit('snack', 'Mod already included in pack')
+        return
+      }
+      this.modVersionsIncluded.push({ slug: mod, version: ver.name })
+    },
+    delMod (simpleModVersion) {
+      let index = this.modVersionsIncluded.indexOf(simpleModVersion)
+      this.modVersionsIncluded.splice(index, 1)
     },
     close () {
       this.$emit('input', false)
