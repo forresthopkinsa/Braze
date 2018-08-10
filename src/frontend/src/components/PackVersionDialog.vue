@@ -14,6 +14,7 @@
           <v-flex xs8>
             <v-text-field
               key="name"
+              v-model="versionName"
               prepend-icon="title"
               placeholder="Version Name"
             />
@@ -21,6 +22,7 @@
           <v-spacer/>
           <v-flex>
             <v-switch
+              v-model="recommended"
               label="Recommended"
             />
           </v-flex>
@@ -47,6 +49,7 @@
           <v-flex xs3>
             <v-select
               :items="javaVersions"
+              v-model="selectedJava"
               label="Java version"
               clearable
             />
@@ -55,6 +58,7 @@
         <v-slider
           :tick-labels="ramTicks"
           :max="8096"
+          v-model="selectedRam"
           label="RAM Requirement"
           step="512"
           tick-size="0"
@@ -164,8 +168,10 @@ export default {
   data () {
     return {
       versionName: '',
+      recommended: false,
       selectedGame: '',
       selectedForge: 0,
+      selectedJava: '',
       ramTicks: [
         'Any', '',
         '1 GiB', '',
@@ -177,6 +183,7 @@ export default {
         '7 GiB', '',
         '8 GiB'
       ],
+      selectedRam: 0,
       selectedMod: {},
       selectedVersion: {},
       mods: [],
@@ -205,15 +212,15 @@ export default {
     },
     packVersion () {
       let obj = {
-        'name': null,
-        'index': null,
-        'forgeVersion': null,
-        'javaVersion': null,
-        'recommended': null,
-        'memory': null,
-        'modlist': []
+        name: this.versionName,
+        slug: this.slugify(this.versionName),
+        index: -1,
+        forgeVersion: this.selectedForge,
+        javaVersion: this.selectedJava,
+        recommended: this.recommended,
+        memory: this.selectedRam,
+        modlist: this.modVersionsIncluded
       }
-      obj.name = this.versionName
 
       return obj
     }
