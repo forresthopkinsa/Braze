@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     var kotlinVersion: String by extra
-    kotlinVersion = "1.2.50"
+    kotlinVersion = "1.2.60"
 
     repositories {
         mavenCentral()
@@ -20,12 +20,12 @@ plugins {
     idea
     maven
 
-    kotlin("jvm") version "1.2.50"
-    kotlin("plugin.spring") version "1.2.50"
-    kotlin("plugin.jpa") version "1.2.50"
+    kotlin("jvm") version "1.2.60"
+    kotlin("plugin.spring") version "1.2.60"
+    kotlin("plugin.jpa") version "1.2.60"
 
-    id("org.springframework.boot") version "2.0.3.RELEASE"
-    id("io.spring.dependency-management") version "1.0.5.RELEASE"
+    id("org.springframework.boot") version "2.0.4.RELEASE"
+    id("io.spring.dependency-management") version "1.0.6.RELEASE"
 
     id("com.moowork.node") version "1.2.0"
 }
@@ -47,6 +47,9 @@ dependencies {
     compile("org.springframework.boot", "spring-boot-starter-actuator")
     compile("org.springframework.boot", "spring-boot-starter-data-jpa")
     compile("org.springframework.boot", "spring-boot-devtools")
+
+    compile("org.springframework.security", "spring-security-web")
+    compile("org.springframework.security", "spring-security-config")
 
     compile("com.google.code.gson", "gson")
 
