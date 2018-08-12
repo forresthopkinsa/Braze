@@ -47,8 +47,14 @@ Vue.mixin({
     postMod (data, success, error) {
       post(mods, data, success, error)
     },
+    postModVersion (slug, data, success, error) {
+      post(`${mods}/${slug}`, data, success, error)
+    },
     postPack (data, success, error) {
       post(packs, data, success, error)
+    },
+    postPackVersion (slug, data, success, error) {
+      post(`${packs}/${slug}`, data, success, error)
     },
     slugify (str) {
       return str.toLowerCase()

@@ -18,15 +18,15 @@
           :loading="versionsLoading[props.index]"
           :versions="versions[props.index]"
           @edit="editVersion(props.item.slug, $event)"
-          @add="addVersionDialog = true"
+          @add="addVersion(props.item.slug)"
         />
       </data-table>
     </root-card>
 
     <pack-version-dialog
       :constants="constants"
-      v-model="addVersionDialog"
-      title="Add version"
+      :pack="addVersionDialog.pack"
+      v-model="addVersionDialog.display"
       @snack="snack('error', $event)"
     />
 
@@ -60,8 +60,11 @@ export default {
   components: { PackVersionDialog, ExpandDetails, Snackbar, AddDialog, AddBtn, DataTable, RootCard },
   data () {
     return {
-      addVersionDialog: false,
-      addVersionDialogText: '',
+      addVersionDialog: {
+        display: false,
+        pack: null,
+        existing: {}
+      },
       packs: [],
       headers: [
         { text: 'Name', value: 'name' },
@@ -95,7 +98,12 @@ export default {
   },
   methods: {
     editVersion (slug, version) {
-      this.addVersionDialog = true
+      this.addVersionDialog.display = true
+      this.addVersionDialog.pack = slug
+    },
+    addVersion (slug) {
+      this.addVersionDialog.display = true
+      this.addVersionDialog.pack = slug
     },
     updateTable () {
       this.tableLoading = true

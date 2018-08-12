@@ -7,16 +7,21 @@
   >
     <v-card>
       <v-card-title class="title grey lighten-4">
-        {{ title }}
+        Add version for {{ pack }}
       </v-card-title>
-      <v-form class="pa-4">
+      <v-form
+        ref="form"
+        lazy-validation
+        class="pa-4"
+      >
         <v-layout justify-space-between>
           <v-flex xs8>
             <v-text-field
               key="name"
+              :rules="[validateName]"
               v-model="versionName"
               prepend-icon="title"
-              placeholder="Version Name"
+              placeholder="Version Name*"
             />
           </v-flex>
           <v-spacer/>
@@ -42,14 +47,18 @@
             <v-autocomplete
               :items="forgeVersionsAvailable"
               v-model="selectedForge"
-              label="Forge Version"
+              item-text="build"
+              item-value="name"
+              label="Forge Version*"
               clearable
             />
           </v-flex>
           <v-flex xs3>
             <v-select
-              :items="javaVersions"
+              :items="constants.java"
               v-model="selectedJava"
+              item-text="version"
+              item-value="name"
               label="Java version"
               clearable
             />
@@ -120,7 +129,7 @@
             :loading="loading"
             flat
             color="primary"
-            @click="log(packVersion)"
+            @click="submit"
           >
             Save
           </v-btn>
@@ -148,13 +157,9 @@ export default {
       type: Boolean,
       default: false
     },
-    title: {
+    pack: {
       type: String,
-      default: 'title'
-    },
-    loading: {
-      type: Boolean,
-      default: false
+      default: null
     },
     error: {
       type: Boolean,
@@ -186,6 +191,7 @@ export default {
       selectedRam: 0,
       selectedMod: {},
       selectedVersion: {},
+      loading: false,
       mods: [],
       modVersions: [],
       versionLoading: false,
@@ -193,9 +199,6 @@ export default {
     }
   },
   computed: {
-    javaVersions () {
-      return toProps(this.constants.java, 'version')
-    },
     forgeVersionsAvailable () {
       let gameVersion = this.selectedGame
       let matches = function (it) {
@@ -207,27 +210,25 @@ export default {
       }
 
       let ret = this.constants.forge.filter(matches)
-      // console.log('forge versions avail: ' + JSON.stringify(ret))
-      return toProps(ret, 'build').sort()
+      return ret.sort()
     },
     packVersion () {
-      let obj = {
+      let ram = this.selectedRam
+      if (ram === 0) ram = null
+
+      return {
         name: this.versionName,
-        slug: this.slugify(this.versionName),
         index: -1,
         forgeVersion: this.selectedForge,
         javaVersion: this.selectedJava,
         recommended: this.recommended,
-        memory: this.selectedRam,
-        modlist: this.modVersionsIncluded
+        memory: ram,
+        modList: this.modVersionsIncluded
       }
-
-      return obj
     }
   },
   mounted: function () {
     this.getMods(it => {
-      // console.log(it.data)
       this.mods = it.data
     }, e => {
       console.log(e)
@@ -238,7 +239,6 @@ export default {
       this.selectedVersion = {}
       this.versionLoading = true
       this.getMod(this.selectedMod, it => {
-        // console.log(it.data)
         this.modVersions = it.data.versions
         this.versionLoading = false
       }, e => {
@@ -250,7 +250,7 @@ export default {
       let mod = this.selectedMod
       let ver = this.selectedVersion
       if (this.modVersionsIncluded.some(it => it.slug === mod)) {
-        this.$emit('snack', 'Mod already included in pack')
+        this.snack('Mod already included in pack')
         return
       }
       this.modVersionsIncluded.push({ slug: mod, version: ver.name })
@@ -259,16 +259,41 @@ export default {
       let index = this.modVersionsIncluded.indexOf(simpleModVersion)
       this.modVersionsIncluded.splice(index, 1)
     },
+    validateName (str) {
+      if (!str) {
+        return 'Name must not be blank'
+      } else if (/[^a-zA-Z\d\-._]/.test(str)) {
+        return 'Name contains invalid characters; only alphanumeric, hyphens, underscores, periods'
+      } else {
+        return true
+      }
+    },
+    submit () {
+      console.log(this.packVersion)
+      if (!this.$refs.form.validate()) {
+        this.snack('Inputs are invalid')
+        return
+      }
+      this.loading = true
+      this.postPackVersion(this.pack, this.packVersion, it => {
+        this.loading = false
+        console.log(it)
+        this.close()
+      }, e => {
+        console.log(e)
+        this.snack(e)
+        this.loading = false
+      })
+    },
     close () {
       this.$emit('input', false)
     },
     log (msg) {
       console.log(msg)
+    },
+    snack (msg) {
+      this.$emit('snack', msg)
     }
   }
-}
-
-function toProps (arr, prop) {
-  return arr.map(it => it[prop])
 }
 </script>
