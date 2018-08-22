@@ -25,7 +25,11 @@ class BrazeTest : AbstractTestNGSpringContextTests() {
     private val root = "/braze/api"
 
     @Autowired
-    private lateinit var template: TestRestTemplate
+    private lateinit var testTemplate: TestRestTemplate
+
+    private val template by lazy {
+        testTemplate.withBasicAuth("user", "testpasswordonly")
+    }
 
     val mod1 by lazy {
         val id = rng
@@ -129,7 +133,7 @@ class BrazeTest : AbstractTestNGSpringContextTests() {
             template.postForEntity("$root/$path", HttpEntity(body), responseType.java)
 
     private fun <T> ResponseEntity<T>.shouldBeOk() {
-        assertEquals(HttpStatus.OK, statusCode)
+        assertEquals(statusCode, HttpStatus.OK)
         println("\nResult: ${body.toString()}\n")
     }
 

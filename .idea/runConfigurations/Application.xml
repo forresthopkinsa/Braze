@@ -3,8 +3,8 @@
     <module name="Braze_main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.forresthopkinsa.braze.spring.Application" />
     <option name="ALTERNATIVE_JRE_PATH" />
-    <method>
-      <option name="Gradle.BeforeRunTask" enabled="true" tasks="assemble" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+    <method v="2">
+      <option name="Make" enabled="true" />
     </method>
   </configuration>
 </component>
