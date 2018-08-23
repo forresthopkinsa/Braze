@@ -16,6 +16,10 @@ const constants = root + 'constants'
 const mods = root + 'mods'
 const packs = root + 'packs'
 
+if (url !== location.origin) { // for dev environment
+  axios.defaults.headers.common['Authorization'] = 'Basic dXNlcjpjaGFuZ2VtZQ=='
+}
+
 const latency = 1600 // artifical latency
 
 Vue.config.productionTip = false
