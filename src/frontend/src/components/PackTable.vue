@@ -24,8 +24,10 @@
     </root-card>
 
     <pack-version-dialog
+      :key="addVersionDialog.key"
       :constants="constants"
       :pack="addVersionDialog.pack"
+      :selection="addVersionDialog.version"
       v-model="addVersionDialog.display"
       @snack="snack('error', $event)"
     />
@@ -63,7 +65,8 @@ export default {
       addVersionDialog: {
         display: false,
         pack: null,
-        existing: {}
+        version: {},
+        key: 0
       },
       packs: [],
       headers: [
@@ -98,12 +101,23 @@ export default {
   },
   methods: {
     editVersion (slug, version) {
-      this.addVersionDialog.display = true
+      this.addVersionDialog.key++
       this.addVersionDialog.pack = slug
+      this.addVersionDialog.version = version
+      this.addVersionDialog.display = true
     },
     addVersion (slug) {
-      this.addVersionDialog.display = true
+      this.addVersionDialog.key++
       this.addVersionDialog.pack = slug
+      this.addVersionDialog.version = {
+        name: null,
+        forgeVersion: null,
+        javaVersion: null,
+        recommended: false,
+        memory: 0,
+        modList: []
+      }
+      this.addVersionDialog.display = true
     },
     updateTable () {
       this.tableLoading = true

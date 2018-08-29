@@ -19,7 +19,7 @@
             <v-text-field
               key="name"
               :rules="[validateName]"
-              v-model="versionName"
+              v-model="selection.name"
               prepend-icon="title"
               placeholder="Version Name*"
             />
@@ -27,7 +27,7 @@
           <v-spacer/>
           <v-flex>
             <v-switch
-              v-model="recommended"
+              v-model="selection.recommended"
               label="Recommended"
             />
           </v-flex>
@@ -46,7 +46,7 @@
           <v-flex xs3>
             <v-autocomplete
               :items="forgeVersionsAvailable"
-              v-model="selectedForge"
+              v-model="selection.forgeVersion"
               item-text="build"
               item-value="name"
               label="Forge Version*"
@@ -56,7 +56,7 @@
           <v-flex xs3>
             <v-select
               :items="constants.java"
-              v-model="selectedJava"
+              v-model="selection.javaVersion"
               item-text="version"
               item-value="name"
               label="Java version"
@@ -67,7 +67,7 @@
         <v-slider
           :tick-labels="ramTicks"
           :max="8096"
-          v-model="selectedRam"
+          v-model="selection.memory"
           label="RAM Requirement"
           step="512"
           tick-size="0"
@@ -107,7 +107,7 @@
           </v-flex>
         </v-layout>
         <included-list
-          :items="modVersionsIncluded"
+          :items="selection.modList"
           @delete="delMod"
         />
       </v-form>
@@ -161,6 +161,17 @@ export default {
       type: String,
       default: null
     },
+    selection: {
+      type: Object,
+      default: () => ({
+        name: null,
+        forgeVersion: null,
+        javaVersion: null,
+        recommended: false,
+        memory: 0,
+        modList: []
+      })
+    },
     error: {
       type: Boolean,
       default: false
@@ -172,11 +183,7 @@ export default {
   },
   data () {
     return {
-      versionName: '',
-      recommended: false,
       selectedGame: '',
-      selectedForge: 0,
-      selectedJava: '',
       ramTicks: [
         'Any', '',
         '1 GiB', '',
@@ -188,14 +195,12 @@ export default {
         '7 GiB', '',
         '8 GiB'
       ],
-      selectedRam: 0,
       selectedMod: {},
       selectedVersion: {},
       loading: false,
       mods: [],
       modVersions: [],
-      versionLoading: false,
-      modVersionsIncluded: []
+      versionLoading: false
     }
   },
   computed: {
@@ -205,6 +210,7 @@ export default {
         if (gameVersion === null || gameVersion.length === 0) {
           return true
         } else {
+          // noinspection JSUnresolvedVariable
           return gameVersion === it.gameVersion.name
         }
       }
@@ -213,17 +219,17 @@ export default {
       return ret.sort()
     },
     packVersion () {
-      let ram = this.selectedRam
+      let ram = this.selection.memory
       if (ram === 0) ram = null
 
       return {
-        name: this.versionName,
+        name: this.selection.name,
         index: -1,
-        forgeVersion: this.selectedForge,
-        javaVersion: this.selectedJava,
-        recommended: this.recommended,
+        forgeVersion: this.selection.forgeVersion,
+        javaVersion: this.selection.javaVersion,
+        recommended: this.selection.recommended,
         memory: ram,
-        modList: this.modVersionsIncluded
+        modList: this.selection.modList
       }
     }
   },
@@ -249,15 +255,15 @@ export default {
     addMod () {
       let mod = this.selectedMod
       let ver = this.selectedVersion
-      if (this.modVersionsIncluded.some(it => it.slug === mod)) {
+      if (this.selection.modList.some(it => it.slug === mod)) {
         this.snack('Mod already included in pack')
         return
       }
-      this.modVersionsIncluded.push({ slug: mod, version: ver.name })
+      this.selection.modList.push({ slug: mod, version: ver.name })
     },
     delMod (simpleModVersion) {
-      let index = this.modVersionsIncluded.indexOf(simpleModVersion)
-      this.modVersionsIncluded.splice(index, 1)
+      let index = this.selection.modList.indexOf(simpleModVersion)
+      this.selection.modList.splice(index, 1)
     },
     validateName (str) {
       if (!str) {

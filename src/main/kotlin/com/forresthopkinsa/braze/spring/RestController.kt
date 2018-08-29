@@ -20,9 +20,9 @@ class RestController {
     }
 
     class Constants(
-            val forge: List<ForgeVersion.ForgeConstant>,
-            val game: List<GameVersion.GameConstant>,
-            val java: List<JavaVersion.JavaConstant>
+            val forge: List<ForgeVersion.ForgeConstant> = ForgeVersion.constants(),
+            val game: List<GameVersion.GameConstant> = GameVersion.constants(),
+            val java: List<JavaVersion.JavaConstant> = JavaVersion.constants()
     )
 
     @GetMapping("/go")
@@ -36,7 +36,7 @@ class RestController {
     ))
 
     @GetMapping("/constants")
-    fun getConstants() = Constants(ForgeVersion.constants(), GameVersion.constants(), JavaVersion.constants())
+    fun getConstants() = Constants()
 
     @GetMapping("/mods") // todo: allow filtering
     fun getMods(): List<SimpleMod> = ModService.getSimpleMods()

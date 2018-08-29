@@ -34,7 +34,7 @@ export default {
   props: {
     items: {
       type: Array,
-      default: () => [ { slug: 'slug', version: 'version' } ]
+      default: () => [ { slug: 'NULL', version: 'NULL' } ]
     }
   },
   methods: {
