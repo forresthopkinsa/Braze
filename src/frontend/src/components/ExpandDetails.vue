@@ -16,9 +16,32 @@
         lg9
         xl10
       >
-        <v-card-title class="subheader">
-          {{ rowData }}
-        </v-card-title>
+        <v-layout
+          justify-space-between
+          fill-height
+          column
+        >
+          <v-card-title>
+            <div>
+              <div class="headline">{{ rowData.name }}</div>
+              <div class="subheading">
+                By <span class="font-italic">{{ rowData.author }}</span>
+              </div>
+              <br>
+              <div class="body-2">{{ rowData.description }}</div>
+              <div class="caption font-weight-light font-italic"> <!-- todo: validate url -->
+                <a :href="rowData.link">Website</a> • <a :href="rowData.donate">Donate</a>
+              </div>
+            </div>
+          </v-card-title>
+          <v-btn
+            class="ma-3"
+            outline
+            fab
+          >
+            <v-icon>edit</v-icon>
+          </v-btn>
+        </v-layout>
       </v-flex>
       <v-flex
         sm5
