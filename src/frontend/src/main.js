@@ -86,7 +86,10 @@ function get (url, success, error) {
 
 function post (url, data, success, error) {
   loadAndThen(() =>
-    axios.post(url, data).then(success).catch(error)
+    axios.post(url, data).then(success).catch(e => {
+      console.error(e.response.data)
+      error(e)
+    })
   )
 }
 

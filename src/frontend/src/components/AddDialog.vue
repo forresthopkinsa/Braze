@@ -17,6 +17,7 @@
           :key="input.name"
           :prepend-icon="input.icon"
           :placeholder="input.name"
+          :disabled="input.readonly"
         />
       </v-form>
       <v-card-actions>

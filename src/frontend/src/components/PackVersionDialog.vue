@@ -161,7 +161,7 @@ export default {
       type: String,
       default: null
     },
-    selection: {
+    preset: {
       type: Object,
       default: () => ({
         name: null,
@@ -183,6 +183,7 @@ export default {
   },
   data () {
     return {
+      selection: JSON.parse(JSON.stringify(this.preset)),
       selectedGame: '',
       ramTicks: [
         'Any', '',
@@ -255,6 +256,11 @@ export default {
     addMod () {
       let mod = this.selectedMod
       let ver = this.selectedVersion
+      console.log(ver)
+      if (ver.name == null || ver.name === '') {
+        this.snack('Mod version is required')
+        return
+      }
       if (this.selection.modList.some(it => it.slug === mod)) {
         this.snack('Mod already included in pack')
         return
@@ -286,8 +292,7 @@ export default {
         console.log(it)
         this.close()
       }, e => {
-        console.log(e)
-        this.snack(e)
+        this.snack(e.response.data.error)
         this.loading = false
       })
     },

@@ -38,6 +38,7 @@
             class="ma-3"
             outline
             fab
+            @click="$emit('edit')"
           >
             <v-icon>edit</v-icon>
           </v-btn>
@@ -61,7 +62,7 @@
               <v-btn
                 icon
                 ripple
-                @click="$emit('edit', version)"
+                @click="$emit('editVersion', version)"
               >
                 <v-icon>edit</v-icon>
               </v-btn>
@@ -71,7 +72,7 @@
             <v-spacer />
             <v-btn
               outline
-              @click="$emit('add')"
+              @click="$emit('addVersion')"
             >
               add version
             </v-btn>

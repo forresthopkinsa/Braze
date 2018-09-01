@@ -26,14 +26,13 @@ interface Manager<S : SimpleElement<S, E>,
 
     // Defaults
 
-    fun add(simple: S): E = db.findBySlug(simple.slug).toElement()
-            ?: converter.run {
-                val entity = fromElement(simple.expand())
-                return@run fromEntity(db.save(entity))
-            }
+    fun add(simple: S): E = converter.run {
+        val entity = fromElement(simple.expand())
+        return@run fromEntity(db.save(entity))
+    }
 
     fun addVersion(slug: String, version: I): E? {
-        if (exists(slug, version.name)) return getBySlug(slug)
+        if (exists(slug, version.name)) return getBySlug(slug) // todo: allow updating versions
 
         val entity = db.findBySlug(slug) ?: return null
 

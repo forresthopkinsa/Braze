@@ -17,8 +17,9 @@
           :row-data="props.item"
           :loading="versionsLoading[props.index]"
           :versions="versions[props.index]"
-          @edit="editVersion(props.item.slug, $event)"
-          @add="addVersion(props.item.slug)"
+          @edit="editPack(props.item)"
+          @editVersion="editVersion(props.item.slug, $event)"
+          @addVersion="addVersion(props.item.slug)"
         />
       </data-table>
     </root-card>
@@ -27,12 +28,12 @@
       :key="addVersionDialog.key"
       :constants="constants"
       :pack="addVersionDialog.pack"
-      :selection="addVersionDialog.version"
+      :preset="addVersionDialog.version"
       v-model="addVersionDialog.display"
       @snack="snack('error', $event)"
     />
 
-    <add-btn @click="dialog = true" />
+    <add-btn @click="addPack" />
 
     <add-dialog
       v-model="dialog"
@@ -40,7 +41,7 @@
       :loading="dialogLoading"
       :error="dialogError"
       title="Add Pack"
-      @add="addPack"
+      @add="submitPack"
     />
 
     <snackbar v-model="snackbar" />
@@ -71,20 +72,14 @@ export default {
       packs: [],
       headers: [
         { text: 'Name', value: 'name' },
-        { text: 'Slug', value: 'slug' }
+        { text: 'Slug', value: 'slug' },
+        { text: 'Author', value: 'author' }
       ],
       tableLoading: false,
       dialog: false,
       dialogLoading: false,
       dialogError: false,
-      inputs: [
-        { name: 'Name', key: 'name', icon: 'title', value: '' },
-        { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
-        { name: 'Author', key: 'author', icon: 'face', value: '' },
-        { name: 'Description', key: 'description', icon: 'insert_comment', value: '' },
-        { name: 'Link', key: 'link', icon: 'link', value: '' },
-        { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
-      ],
+      inputs: [],
       snackbar: { display: false, color: 'primary', text: '[default]' },
       versionsLoading: [],
       versions: [],
@@ -141,7 +136,29 @@ export default {
         console.log(e)
       })
     },
-    addPack (inputs) {
+    addPack () {
+      this.inputs = [
+        { name: 'Name', key: 'name', icon: 'title', value: '' },
+        { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
+        { name: 'Author', key: 'author', icon: 'face', value: '' },
+        { name: 'Description', key: 'description', icon: 'insert_comment', value: '' },
+        { name: 'Link', key: 'link', icon: 'link', value: '' },
+        { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
+      ]
+      this.dialog = true
+    },
+    editPack (data) {
+      this.inputs = [
+        { name: 'Name', key: 'name', icon: 'title', value: data.name },
+        { name: 'Slug', key: 'slug', icon: 'fingerprint', value: data.slug, readonly: true },
+        { name: 'Author', key: 'author', icon: 'face', value: data.author },
+        { name: 'Description', key: 'description', icon: 'insert_comment', value: data.description },
+        { name: 'Link', key: 'link', icon: 'link', value: data.link },
+        { name: 'Donate', key: 'donate', icon: 'attach_money', value: data.donate }
+      ]
+      this.dialog = true
+    },
+    submitPack (inputs) {
       this.dialogLoading = true
       let pack = {}
 
