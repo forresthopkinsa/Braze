@@ -18,7 +18,7 @@ class SolderController {
     }
 
     @GetMapping("", "/")
-    fun getApi(): API = API(name, appVersion, stream)
+    fun getApi(): API = API(APP_NAME, APP_VERSION, APP_STREAM)
 
     @GetMapping("/mod")
     fun getMod(): ModList = TODO()

@@ -7,10 +7,10 @@ import com.google.gson.Gson
 private val gson = Gson()
 
 internal fun <T : DAO.DataEntity, U : Data> U?.toEntity(converter: DAO.EntityConverter<T, U>): T? =
-        this?.let { converter.fromElement(it) }
+    this?.let { converter.fromElement(it) }
 
 internal fun <T : DAO.DataEntity, U : Data> T?.toElement(converter: DAO.EntityConverter<T, U>): U? =
-        this?.let { converter.fromEntity(it) }
+    this?.let { converter.fromEntity(it) }
 
 internal fun Any.toJson(): String = gson.toJson(this)
 

@@ -8,15 +8,11 @@ import com.forresthopkinsa.braze.model.IndexedModVersion
 import com.forresthopkinsa.braze.model.Mod
 import com.forresthopkinsa.braze.model.ModVersion
 import com.forresthopkinsa.braze.model.SimpleMod
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-object ModManager : Manager<SimpleMod, Mod, ModEntity, ModVersionEntity, ModVersion, IndexedModVersion> {
-
-    override lateinit var db: ModRepository
-        @Autowired
-        set
+class ModManager(override val db: ModRepository) :
+    Manager<SimpleMod, Mod, ModEntity, ModVersionEntity, ModVersion, IndexedModVersion> {
 
     override val converter = ModConverter
 

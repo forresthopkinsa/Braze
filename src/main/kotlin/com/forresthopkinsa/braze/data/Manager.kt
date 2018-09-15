@@ -67,7 +67,7 @@ interface Manager<S : SimpleElement<S, E>,
     fun exists(slug: String): Boolean = db.existsById(slug)
 
     fun exists(slug: String, version: String): Boolean =
-            getBySlug(slug)?.versions?.any { it.name == version } ?: false
+        getBySlug(slug)?.versions?.any { it.name == version } ?: false
 
     private fun N?.toElement(): E? = this?.toElement(converter)
 

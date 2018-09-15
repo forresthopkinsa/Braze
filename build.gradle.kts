@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     var kotlinVersion: String by extra
-    kotlinVersion = "1.2.60"
+    kotlinVersion = "1.2.70"
 
     repositories {
         mavenCentral()
@@ -20,9 +20,9 @@ plugins {
     idea
     maven
 
-    kotlin("jvm") version "1.2.60"
-    kotlin("plugin.spring") version "1.2.60"
-    kotlin("plugin.jpa") version "1.2.60"
+    kotlin("jvm") version "1.2.70"
+    kotlin("plugin.spring") version "1.2.70"
+    kotlin("plugin.jpa") version "1.2.70"
 
     id("org.springframework.boot") version "2.0.4.RELEASE"
     id("io.spring.dependency-management") version "1.0.6.RELEASE"

@@ -12,13 +12,13 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
-                .cors()
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic()
+            .cors()
+            .and()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET).permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .httpBasic()
     }
 
 }

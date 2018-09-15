@@ -8,15 +8,11 @@ import com.forresthopkinsa.braze.model.IndexedPackVersion
 import com.forresthopkinsa.braze.model.Pack
 import com.forresthopkinsa.braze.model.PackVersion
 import com.forresthopkinsa.braze.model.SimplePack
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-object PackManager : Manager<SimplePack, Pack, PackEntity, PackVersionEntity, PackVersion, IndexedPackVersion> {
-
-    override lateinit var db: PackRepository
-        @Autowired
-        set
+class PackManager(override val db: PackRepository) :
+    Manager<SimplePack, Pack, PackEntity, PackVersionEntity, PackVersion, IndexedPackVersion> {
 
     override val converter = PackConverter
 

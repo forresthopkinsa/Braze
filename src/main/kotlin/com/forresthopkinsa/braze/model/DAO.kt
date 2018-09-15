@@ -27,42 +27,42 @@ class DAO {
         @Entity
         @Table(name = "MODS")
         data class ModEntity(
-                @Id
-                val slug: String,
+            @Id
+            val slug: String,
 
-                @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
-                @JoinColumn(name = "PARENT")
-                @OrderColumn(name = "INDEX")
-                override val versions: List<ModVersionEntity>,
+            @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+            @JoinColumn(name = "PARENT")
+            @OrderColumn(name = "INDEX")
+            override val versions: List<ModVersionEntity>,
 
-                var name: String,
-                var author: String,
-                var description: String,
-                var link: String?,
-                var donate: String?
+            var name: String,
+            var author: String,
+            var description: String,
+            var link: String?,
+            var donate: String?
         ) : VersionedEntity<ModVersionEntity>
 
         override fun fromElement(element: Mod): ModEntity = element.run {
             ModEntity(
-                    slug = slug,
-                    versions = versions.simplify().map(ModVersionConverter::fromElement),
-                    name = name,
-                    author = author,
-                    description = description,
-                    link = link,
-                    donate = donate
+                slug = slug,
+                versions = versions.simplify().map(ModVersionConverter::fromElement),
+                name = name,
+                author = author,
+                description = description,
+                link = link,
+                donate = donate
             )
         }
 
         override fun fromEntity(entity: ModEntity): Mod = entity.run {
             Mod(
-                    slug = slug,
-                    name = name,
-                    author = author,
-                    description = description,
-                    link = link,
-                    donate = donate,
-                    versions = versions.map(ModVersionConverter::fromEntity).expand()
+                slug = slug,
+                name = name,
+                author = author,
+                description = description,
+                link = link,
+                donate = donate,
+                versions = versions.map(ModVersionConverter::fromEntity).expand()
             )
         }
 
@@ -73,43 +73,43 @@ class DAO {
         @Entity
         @Table(name = "MODVERSIONS")
         data class ModVersionEntity(
-                @Id @GeneratedValue
-                val id: Int = 0,
+            @Id @GeneratedValue
+            val id: Int = 0,
 
-                @ElementCollection
-                @CollectionTable(name = "DEPENDENCIES", joinColumns = [JoinColumn(name = "PARENT")])
-                val dependencies: List<SimpleModVersionEntity>,
+            @ElementCollection
+            @CollectionTable(name = "DEPENDENCIES", joinColumns = [JoinColumn(name = "PARENT")])
+            val dependencies: List<SimpleModVersionEntity>,
 
-                @Enumerated(EnumType.STRING)
-                var minForge: ForgeVersion,
+            @Enumerated(EnumType.STRING)
+            var minForge: ForgeVersion,
 
-                @Enumerated(EnumType.STRING)
-                var maxForge: ForgeVersion,
+            @Enumerated(EnumType.STRING)
+            var maxForge: ForgeVersion,
 
-                var name: String,
-                var md5: String?,
-                var size: Int?
+            var name: String,
+            var md5: String?,
+            var size: Int?
         ) : DataEntity
 
         override fun fromEntity(entity: ModVersionEntity) = entity.run {
             ModVersion(
-                    name = name,
-                    minForge = minForge,
-                    maxForge = maxForge,
-                    md5 = md5,
-                    size = size,
-                    dependencies = dependencies.map(SimpleModVersionConverter::fromEntity)
+                name = name,
+                minForge = minForge,
+                maxForge = maxForge,
+                md5 = md5,
+                size = size,
+                dependencies = dependencies.map(SimpleModVersionConverter::fromEntity)
             )
         }
 
         override fun fromElement(element: ModVersion) = element.run {
             ModVersionEntity(
-                    dependencies = dependencies.map(SimpleModVersionConverter::fromElement),
-                    minForge = minForge,
-                    maxForge = maxForge,
-                    name = name,
-                    md5 = md5,
-                    size = size
+                dependencies = dependencies.map(SimpleModVersionConverter::fromElement),
+                minForge = minForge,
+                maxForge = maxForge,
+                name = name,
+                md5 = md5,
+                size = size
             )
         }
     }
@@ -117,8 +117,10 @@ class DAO {
     object SimpleModVersionConverter : EntityConverter<SimpleModVersionEntity, SimpleModVersion> {
 
         @Embeddable
-        data class SimpleModVersionEntity(val slug: String,
-                                          val version: String) : DataEntity
+        data class SimpleModVersionEntity(
+            val slug: String,
+            val version: String
+        ) : DataEntity
 
         override fun fromElement(element: SimpleModVersion) = element.run {
             SimpleModVersionEntity(slug, version)
@@ -135,41 +137,42 @@ class DAO {
         @Entity
         @Table(name = "PACKS")
         data class PackEntity(
-                @Id
-                val slug: String,
+            @Id
+            val slug: String,
 
-                @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
-                @JoinColumn(name = "PARENT")
-                @OrderColumn(name = "INDEX")
-                override val versions: List<PackVersionEntity>,
+            @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
+            @JoinColumn(name = "PARENT")
+            @OrderColumn(name = "INDEX")
+            override val versions: List<PackVersionEntity>,
 
-                var name: String,
-                var author: String,
-                var description: String,
-                var link: String?,
-                var donate: String?) : VersionedEntity<PackVersionEntity>
+            var name: String,
+            var author: String,
+            var description: String,
+            var link: String?,
+            var donate: String?
+        ) : VersionedEntity<PackVersionEntity>
 
         override fun fromElement(element: Pack) = element.run {
             PackEntity(
-                    slug = slug,
-                    versions = versions.simplify().map(PackVersionConverter::fromElement),
-                    name = name,
-                    author = author,
-                    description = description,
-                    link = link,
-                    donate = donate
+                slug = slug,
+                versions = versions.simplify().map(PackVersionConverter::fromElement),
+                name = name,
+                author = author,
+                description = description,
+                link = link,
+                donate = donate
             )
         }
 
         override fun fromEntity(entity: PackEntity) = entity.run {
             Pack(
-                    slug = slug,
-                    versions = versions.map(PackVersionConverter::fromEntity).expand(),
-                    name = name,
-                    author = author,
-                    description = description,
-                    link = link,
-                    donate = donate
+                slug = slug,
+                versions = versions.map(PackVersionConverter::fromEntity).expand(),
+                name = name,
+                author = author,
+                description = description,
+                link = link,
+                donate = donate
             )
         }
 
@@ -180,43 +183,43 @@ class DAO {
         @Entity
         @Table(name = "PACKVERSIONS")
         data class PackVersionEntity(
-                @Id @GeneratedValue
-                val id: Int = 0,
+            @Id @GeneratedValue
+            val id: Int = 0,
 
-                @ElementCollection
-                @CollectionTable(name = "INCLUDEDMODS", joinColumns = [JoinColumn(name = "PARENT")])
-                var modList: List<SimpleModVersionEntity>,
+            @ElementCollection
+            @CollectionTable(name = "INCLUDEDMODS", joinColumns = [JoinColumn(name = "PARENT")])
+            var modList: List<SimpleModVersionEntity>,
 
-                @Enumerated(EnumType.STRING)
-                var forgeVersion: ForgeVersion,
+            @Enumerated(EnumType.STRING)
+            var forgeVersion: ForgeVersion,
 
-                @Enumerated(EnumType.STRING)
-                var javaVersion: JavaVersion?,
+            @Enumerated(EnumType.STRING)
+            var javaVersion: JavaVersion?,
 
-                var name: String,
-                var recommended: Boolean,
-                var memory: Int?
+            var name: String,
+            var recommended: Boolean,
+            var memory: Int?
         ) : DataEntity
 
         override fun fromElement(element: PackVersion) = element.run {
             PackVersionEntity(
-                    modList = modList.map(SimpleModVersionConverter::fromElement),
-                    forgeVersion = forgeVersion,
-                    javaVersion = javaVersion,
-                    name = name,
-                    recommended = recommended,
-                    memory = memory
+                modList = modList.map(SimpleModVersionConverter::fromElement),
+                forgeVersion = forgeVersion,
+                javaVersion = javaVersion,
+                name = name,
+                recommended = recommended,
+                memory = memory
             )
         }
 
         override fun fromEntity(entity: PackVersionEntity) = entity.run {
             PackVersion(
-                    name = name,
-                    forgeVersion = forgeVersion,
-                    javaVersion = javaVersion,
-                    recommended = recommended,
-                    memory = memory,
-                    modList = modList.map(SimpleModVersionConverter::fromEntity)
+                name = name,
+                forgeVersion = forgeVersion,
+                javaVersion = javaVersion,
+                recommended = recommended,
+                memory = memory,
+                modList = modList.map(SimpleModVersionConverter::fromEntity)
             )
         }
 

@@ -18,13 +18,13 @@ import javax.sql.DataSource
 class DataConfiguration(@Value("\${braze.persist}") private val persist: Boolean) {
 
     private val url =
-            if (persist) "jdbc:h2:./braze;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;" else "jdbc:h2:mem:testdb"
+        if (persist) "jdbc:h2:./braze;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;" else "jdbc:h2:mem:testdb"
 
     @Bean
     fun dataSource(): DataSource = DataSourceBuilder.create()
-            .username("sa")
-            .url(url)
-            .build()
+        .username("sa")
+        .url(url)
+        .build()
 
     @Bean
     fun jpaVendorAdapter(): JpaVendorAdapter = HibernateJpaVendorAdapter().apply {
@@ -34,11 +34,11 @@ class DataConfiguration(@Value("\${braze.persist}") private val persist: Boolean
 
     @Bean
     fun entityManagerFactory(ds: DataSource, adapter: JpaVendorAdapter): LocalContainerEntityManagerFactoryBean =
-            LocalContainerEntityManagerFactoryBean().apply {
-                dataSource = ds
-                jpaVendorAdapter = adapter
-                setPackagesToScan("com.forresthopkinsa.braze.model")
-            }
+        LocalContainerEntityManagerFactoryBean().apply {
+            dataSource = ds
+            jpaVendorAdapter = adapter
+            setPackagesToScan("com.forresthopkinsa.braze.model")
+        }
 
     @Bean
     fun transactionManager(emf: EntityManagerFactory): JpaTransactionManager = JpaTransactionManager(emf)

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SpringBootApplication
-@ComponentScan("com.forresthopkinsa.braze.spring", "com.forresthopkinsa.braze.data")
+@ComponentScan("com.forresthopkinsa.braze")
 @EnableJpaRepositories(basePackages = ["com.forresthopkinsa.braze.data"])
 @EntityScan("com.forresthopkinsa.braze.model")
 class Application
@@ -16,6 +16,6 @@ fun main(args: Array<String>) {
     runApplication<Application>(*args)
 }
 
-const val appVersion = "0.1-SNAPSHOT"
-const val name = "Braze"
-const val stream = "DEV"
+const val APP_VERSION = "0.1-SNAPSHOT"
+const val APP_NAME = "Braze"
+const val APP_STREAM = "DEV"

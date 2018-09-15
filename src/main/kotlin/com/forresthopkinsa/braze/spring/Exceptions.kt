@@ -12,7 +12,7 @@ sealed class NotFoundException(reason: String) : RestException(reason)
 class ModNotFoundException(slug: String) : NotFoundException("Mod '$slug' does not exist")
 
 class ModVersionNotFoundException(slug: String, version: String) :
-        NotFoundException("ModVersion '$slug' : '$version' does not exist")
+    NotFoundException("ModVersion '$slug' : '$version' does not exist")
 
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Slug is not correctly formed")
