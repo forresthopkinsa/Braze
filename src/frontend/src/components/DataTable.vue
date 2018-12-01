@@ -14,6 +14,7 @@
       <td
         v-for="header in headers"
         :key="header.value"
+        style="cursor: pointer"
         @click="expand(props)"
       >
         {{ props.item[header.value] }}
@@ -58,7 +59,7 @@ export default {
   },
   computed: {
     // if description is more than 64 characters, truncate it
-    truncatedItems () {
+    truncatedItems () { // todo: use Vuetify's truncation
       return this.items.map(it => {
         if (it.description != null && it.description.length > 64) {
           it.description = it.description.substring(0, 63) + '...'

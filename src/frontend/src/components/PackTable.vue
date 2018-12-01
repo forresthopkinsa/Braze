@@ -1,9 +1,7 @@
 <template>
   <v-container>
 
-    <root-card
-      card-title="Pack Library"
-    >
+    <root-card card-title="Pack Library">
       <data-table
         slot-scope="card"
         :loading="tableLoading"

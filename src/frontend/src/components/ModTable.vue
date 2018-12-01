@@ -8,7 +8,15 @@
         :search="card.search"
         :headers="headers"
         :items="mods"
-      />
+        @expand="expandHandler"
+      >
+        <expand-details
+          slot-scope="props"
+          :row-data="props.item"
+          :loading="versionsLoading[props.index]"
+          :versions="versions[props.index]"
+        />
+      </data-table>
     </root-card>
 
     <add-btn @click="dialog = true" />
@@ -33,10 +41,11 @@ import DataTable from '@/components/DataTable'
 import AddBtn from '@/components/AddBtn'
 import AddDialog from '@/components/AddDialog'
 import Snackbar from '@/components/Snackbar'
+import ExpandDetails from '@/components/ExpandDetails'
 
 export default {
   name: 'ModTable',
-  components: { Snackbar, AddDialog, AddBtn, DataTable, RootCard },
+  components: { ExpandDetails, Snackbar, AddDialog, AddBtn, DataTable, RootCard },
   data () {
     return {
       mods: [],
@@ -51,6 +60,8 @@ export default {
       error: false,
       tableLoading: false,
       saveLoading: false,
+      versionsLoading: [],
+      versions: [],
       inputs: [
         { name: 'Name', key: 'name', icon: 'title', value: '' },
         { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
@@ -76,6 +87,18 @@ export default {
       }, e => {
         this.tableLoading = false
         this.snack('error', e.message)
+      })
+    },
+
+    expandHandler (expansion) {
+      let index = expansion.index
+      this.$set(this.versionsLoading, index, true)
+
+      this.getMod(expansion.slug, it => {
+        this.$set(this.versions, index, it.data.versions)
+        this.versionsLoading.splice(index, 1, false)
+      }, e => {
+        console.log(e)
       })
     },
 
