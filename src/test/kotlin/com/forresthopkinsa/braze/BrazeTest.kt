@@ -5,7 +5,6 @@ import com.forresthopkinsa.braze.model.ForgeVersion.F1388
 import com.forresthopkinsa.braze.model.ForgeVersion.F1492
 import com.forresthopkinsa.braze.model.JavaVersion.J8
 import com.forresthopkinsa.braze.spring.Application
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -20,12 +19,9 @@ import java.util.*
 import kotlin.reflect.KClass
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = [Application::class])
-class BrazeTest : AbstractTestNGSpringContextTests() {
+class BrazeTest(private var testTemplate: TestRestTemplate) : AbstractTestNGSpringContextTests() {
 
     private val root = "/braze/api"
-
-    @Autowired
-    private lateinit var testTemplate: TestRestTemplate
 
     private val template by lazy {
         testTemplate.withBasicAuth("user", "testpasswordonly")
@@ -34,45 +30,45 @@ class BrazeTest : AbstractTestNGSpringContextTests() {
     val mod1 by lazy {
         val id = rng
         SimpleMod(
-                slug = "mod-$id",
-                name = "Mod $id",
-                author = "Author $id",
-                description = "Desc $id!",
-                link = null,
-                donate = null
+            slug = "mod-$id",
+            name = "Mod $id",
+            author = "Author $id",
+            description = "Desc $id!",
+            link = null,
+            donate = null
         )
     }
 
     val modVersion1 by lazy {
         IndexedModVersion(
-                name = "1.2.$rng",
-                index = 0,
-                minForge = F1388,
-                maxForge = F1492,
-                dependencies = listOf(SimpleModVersion("foo", "bar"))
+            name = "1.2.$rng",
+            index = 0,
+            minForge = F1388,
+            maxForge = F1492,
+            dependencies = listOf(SimpleModVersion("foo", "bar"))
         )
     }
 
     val pack1 by lazy {
         val id = rng
         SimplePack(
-                slug = "pack-$id",
-                name = "Pack $id",
-                author = "Author $id",
-                description = "Desc $id!",
-                link = null,
-                donate = null
+            slug = "pack-$id",
+            name = "Pack $id",
+            author = "Author $id",
+            description = "Desc $id!",
+            link = null,
+            donate = null
         )
     }
 
     val packVersion1 by lazy {
         IndexedPackVersion(
-                name = "3.4.$rng",
-                index = 0,
-                forgeVersion = F1492,
-                javaVersion = J8,
-                memory = null,
-                modList = listOf(SimpleModVersion(mod1.slug, modVersion1.name))
+            name = "3.4.$rng",
+            index = 0,
+            forgeVersion = F1492,
+            javaVersion = J8,
+            memory = null,
+            modList = listOf(SimpleModVersion(mod1.slug, modVersion1.name))
         )
     }
 
@@ -127,10 +123,10 @@ class BrazeTest : AbstractTestNGSpringContextTests() {
     }
 
     private fun <T : Any> get(path: String, responseType: KClass<T>) =
-            template.getForEntity("$root/$path", responseType.java)
+        template.getForEntity("$root/$path", responseType.java)
 
     private fun <T : Any> post(path: String, body: Any, responseType: KClass<T>) =
-            template.postForEntity("$root/$path", HttpEntity(body), responseType.java)
+        template.postForEntity("$root/$path", HttpEntity(body), responseType.java)
 
     private fun <T> ResponseEntity<T>.shouldBeOk() {
         assertEquals(statusCode, HttpStatus.OK)
