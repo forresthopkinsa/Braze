@@ -55,8 +55,10 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   name: 'AddDialog',
   props: {
     value: {
@@ -80,10 +82,6 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
-    }
-  },
   watch: {
     value: function (newValue, oldValue) {
       if (!newValue) {
@@ -93,11 +91,11 @@ export default {
         this.error = false
       }
     }
-  },
-  methods: {
+  }
+})
+export default class AddDialogComponent extends Vue {
     close () {
       this.$emit('input', false)
     }
-  }
 }
 </script>

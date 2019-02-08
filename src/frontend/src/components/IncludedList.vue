@@ -28,8 +28,10 @@
   </v-list>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   name: 'IncludedList',
   props: {
     items: {
@@ -37,8 +39,8 @@ export default {
       default: () => [ { slug: 'NULL', version: 'NULL' } ]
     }
   },
-  methods: {
+})
+export default class IncludedListComponent extends Vue {
     doNothing () { }
-  }
 }
 </script>

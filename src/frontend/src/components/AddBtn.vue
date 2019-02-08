@@ -11,8 +11,12 @@
   </v-btn>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   name: 'AddBtn'
+})
+export default class AddBtnComponent extends Vue {
 }
 </script>

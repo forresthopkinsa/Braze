@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import ModTable from '@/components/ModTable'
-import PackTable from '@/components/PackTable'
+import ModTable from '@/components/ModTable.vue'
+import PackTable from '@/components/PackTable.vue'
 
 Vue.use(Router)
 

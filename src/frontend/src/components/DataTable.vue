@@ -29,8 +29,10 @@
   </v-data-table>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+
+@Component({
   name: 'DataTable',
   props: {
     loading: {
@@ -44,22 +46,22 @@ export default {
     headers: {
       type: Array,
       default: () => [ { text: 'text', value: 'value' } ]
-    },
-    items: { // depends on these objects having a 'slug' field; description will be truncated IF it's supplied
-      type: Array,
-      default: () => [ { slug: 'slug', name: 'name', author: 'author', description: 'description' } ]
     }
   },
-  data () {
-    return {
-      pagination: {
+})
+export default class DataTableComponent extends Vue {
+  @Prop({ // depends on these objects having a 'slug' field; description will be truncated IF it's supplied
+    type: Array,
+    default: () => [ { slug: 'slug', name: 'name', author: 'author', description: 'description' } ]
+  })
+  items: Array<{slug: string, name: string, author: string, description: string}>
+
+      pagination = {
         rowsPerPage: (document.documentElement.clientHeight >= 850) ? 10 : 5
       }
-    }
-  },
-  computed: {
+
     // if description is more than 64 characters, truncate it
-    truncatedItems () { // todo: use Vuetify's truncation
+    get truncatedItems () { // todo: use Vuetify's truncation
       return this.items.map(it => {
         if (it.description != null && it.description.length > 64) {
           it.description = it.description.substring(0, 63) + '...'
@@ -67,13 +69,11 @@ export default {
         return it
       })
     }
-  },
-  methods: {
+
     expand (scope) {
       scope.expanded = !scope.expanded
       console.log(scope)
       this.$emit('expand', { index: scope.index, slug: scope.item.slug, expanded: scope.expanded })
     }
-  }
 }
 </script>

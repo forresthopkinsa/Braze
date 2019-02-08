@@ -47,58 +47,59 @@
   </v-container>
 </template>
 
-<script>
-import RootCard from '@/components/RootCard'
-import DataTable from '@/components/DataTable'
-import AddBtn from '@/components/AddBtn'
-import AddDialog from '@/components/AddDialog'
-import Snackbar from '@/components/Snackbar'
-import ExpandDetails from '@/components/ExpandDetails'
-import PackVersionDialog from '@/components/PackVersionDialog'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import RootCard from '@/components/RootCard.vue'
+import DataTable from '@/components/DataTable.vue'
+import AddBtn from '@/components/AddBtn.vue'
+import AddDialog from '@/components/AddDialog.vue'
+import Snackbar from '@/components/Snackbar.vue'
+import ExpandDetails from '@/components/ExpandDetails.vue'
+import PackVersionDialog from '@/components/PackVersionDialog.vue'
+import * as Util from '../util'
 
-export default {
+@Component({
   name: 'PackTable',
   components: { PackVersionDialog, ExpandDetails, Snackbar, AddDialog, AddBtn, DataTable, RootCard },
-  data () {
-    return {
-      addVersionDialog: {
+})
+export default class PackTable extends Vue {
+      addVersionDialog = {
         display: false,
         pack: null,
         version: {},
         key: 0
-      },
-      packs: [],
-      headers: [
+      }
+      packs = []
+      headers = [
         { text: 'Name', value: 'name' },
         { text: 'Slug', value: 'slug' },
         { text: 'Author', value: 'author' }
-      ],
-      tableLoading: false,
-      dialog: false,
-      dialogLoading: false,
-      dialogError: false,
-      inputs: [],
-      snackbar: { display: false, color: 'primary', text: '[default]' },
-      versionsLoading: [],
-      versions: [],
-      constants: { forge: [], game: [], java: [] }
-    }
-  },
-  mounted: function () {
+      ]
+      tableLoading = false
+      dialog = false
+      dialogLoading = false
+      dialogError = false
+      inputs = []
+      snackbar = { display: false, color: 'primary', text: '[default]' }
+      versionsLoading = []
+      versions = []
+      constants = { forge: [], game: [], java: [] }
+
+  mounted () {
     this.updateTable()
-    this.getConstants(it => {
+    Util.getConstants(it => {
       this.constants = it.data
     }, e => {
       console.log(e)
     })
-  },
-  methods: {
+  }
+
     editVersion (slug, version) {
       this.addVersionDialog.key++
       this.addVersionDialog.pack = slug
       this.addVersionDialog.version = version
       this.addVersionDialog.display = true
-    },
+    }
     addVersion (slug) {
       this.addVersionDialog.key++
       this.addVersionDialog.pack = slug
@@ -111,29 +112,29 @@ export default {
         modList: []
       }
       this.addVersionDialog.display = true
-    },
+    }
     updateTable () {
       this.tableLoading = true
 
-      this.getPacks(it => {
+      Util.getPacks(it => {
         this.packs = it.data
         this.tableLoading = false
       }, e => {
         this.tableLoading = false
         this.snack('error', e.message)
       })
-    },
+    }
     expandHandler (expansion) {
       let index = expansion.index
       this.$set(this.versionsLoading, index, true)
 
-      this.getPack(expansion.slug, it => {
+      Util.getPack(expansion.slug, it => {
         this.$set(this.versions, index, it.data.versions)
         this.versionsLoading.splice(index, 1, false)
       }, e => {
         console.log(e)
       })
-    },
+    }
     addPack () {
       this.inputs = [
         { name: 'Name', key: 'name', icon: 'title', value: '' },
@@ -144,7 +145,7 @@ export default {
         { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
       ]
       this.dialog = true
-    },
+    }
     editPack (data) {
       this.inputs = [
         { name: 'Name', key: 'name', icon: 'title', value: data.name },
@@ -155,7 +156,7 @@ export default {
         { name: 'Donate', key: 'donate', icon: 'attach_money', value: data.donate }
       ]
       this.dialog = true
-    },
+    }
     submitPack (inputs) {
       this.dialogLoading = true
       let pack = {}
@@ -165,7 +166,7 @@ export default {
         pack[input.key] = input.value
       }
 
-      this.postPack(pack, it => {
+      Util.postPack(pack, it => {
         // console.log(it)
         this.updateTable()
         this.dialogLoading = false
@@ -175,12 +176,11 @@ export default {
         this.dialogError = true
         this.snack('error', e.message)
       })
-    },
+    }
     snack (color, text) {
       this.snackbar.color = color
       this.snackbar.text = text
       this.snackbar.display = true
     }
-  }
 }
 </script>

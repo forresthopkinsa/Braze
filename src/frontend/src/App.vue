@@ -51,22 +51,21 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import UploadButton from 'vuetify-upload-button'
 
-export default {
+@Component({
   name: 'App',
   components: {
     'upload-btn': UploadButton
   },
-  data () {
-    return {
-      drawer: (document.documentElement.clientWidth >= 1264),
-      pages: [
+})
+export default class AppComponent extends Vue {
+      drawer = (document.documentElement.clientWidth >= 1264)
+      pages = [
         { title: 'Mods', icon: 'folder', url: '/mods' },
         { title: 'Packs', icon: 'apps', url: '/packs' }
       ]
-    }
-  }
 }
 </script>

@@ -35,34 +35,43 @@
   </v-container>
 </template>
 
-<script>
-import RootCard from '@/components/RootCard'
-import DataTable from '@/components/DataTable'
-import AddBtn from '@/components/AddBtn'
-import AddDialog from '@/components/AddDialog'
-import Snackbar from '@/components/Snackbar'
-import ExpandDetails from '@/components/ExpandDetails'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import RootCard from '@/components/RootCard.vue'
+import DataTable from '@/components/DataTable.vue'
+import AddBtn from '@/components/AddBtn.vue'
+import AddDialog from '@/components/AddDialog.vue'
+import Snackbar from '@/components/Snackbar.vue'
+import ExpandDetails from '@/components/ExpandDetails.vue'
+import * as Util from '../util'
 
-export default {
+@Component({
   name: 'ModTable',
-  components: { ExpandDetails, Snackbar, AddDialog, AddBtn, DataTable, RootCard },
-  data () {
-    return {
-      mods: [],
-      headers: [
+  components: {
+    ExpandDetails,
+    Snackbar,
+    AddDialog,
+    DataTable,
+    AddBtn,
+    RootCard
+  }
+})
+export default class ModTableComponent extends Vue {
+      mods = []
+      headers = [
         { text: 'Name', value: 'name' },
         { text: 'Slug', value: 'slug' },
         { text: 'Author', value: 'author' },
         { text: 'Description', value: 'description' }
-      ],
-      dialog: false,
-      snackbar: { display: false, color: '', text: '' },
-      error: false,
-      tableLoading: false,
-      saveLoading: false,
-      versionsLoading: [],
-      versions: [],
-      inputs: [
+      ]
+      dialog = false
+      snackbar = { display: false, color: '', text: '' }
+      error = false
+      tableLoading = false
+      saveLoading = false
+      versionsLoading: Array<boolean> = []
+      versions = []
+      inputs = [
         { name: 'Name', key: 'name', icon: 'title', value: '' },
         { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
         { name: 'Author', key: 'author', icon: 'face', value: '' },
@@ -70,64 +79,60 @@ export default {
         { name: 'Link', key: 'link', icon: 'link', value: '' },
         { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
       ]
-    }
-  },
 
   mounted () {
     this.updateTable()
-  },
+  }
 
-  methods: {
     updateTable () {
       this.tableLoading = true
 
-      this.getMods(it => {
+      Util.getMods((it: any) => {
         this.mods = it.data
         this.tableLoading = false
-      }, e => {
+      }, (e: Error) => {
         this.tableLoading = false
         this.snack('error', e.message)
       })
-    },
+    }
 
-    expandHandler (expansion) {
+    expandHandler (expansion: any) {
       let index = expansion.index
       this.$set(this.versionsLoading, index, true)
 
-      this.getMod(expansion.slug, it => {
+      Util.getMod(expansion.slug, (it: any) => {
         this.$set(this.versions, index, it.data.versions)
         this.versionsLoading.splice(index, 1, false)
-      }, e => {
+      }, (e: Error) => {
         console.log(e)
       })
-    },
+    }
 
-    addMod (inputs) {
+    addMod (inputs: any) {
       this.saveLoading = true
-      let mod = {}
+      let mod: any = {}
 
       for (let i in inputs) {
         let input = inputs[i]
         mod[input.key] = input.value
       }
 
-      this.postMod(mod, it => {
+      Util.postMod(mod, (it: any) => {
         console.log(it)
         this.updateTable()
         this.saveLoading = false
         this.dialog = false
-      }, e => {
+      }, (e: Error) => {
         this.saveLoading = false
         this.error = true
         this.snack('error', e.message)
       })
-    },
+    }
 
-    snack (color, text) {
+    snack (color: string, text: string) {
       this.snackbar.color = color
       this.snackbar.text = text
       this.snackbar.display = true
     }
-  }
 }
 </script>

@@ -146,10 +146,12 @@
   </v-dialog>
 </template>
 
-<script>
-import IncludedList from '@/components/IncludedList'
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import * as Util from '../util'
+import IncludedList from '@/components/IncludedList.vue'
 
-export default {
+@Component({
   name: 'PackVersionDialog',
   components: { IncludedList },
   props: {
@@ -157,35 +159,46 @@ export default {
       type: Boolean,
       default: false
     },
-    pack: {
-      type: String,
-      default: null
-    },
-    preset: {
-      type: Object,
-      default: () => ({
-        name: null,
-        forgeVersion: null,
-        javaVersion: null,
-        recommended: false,
-        memory: 0,
-        modList: []
-      })
-    },
     error: {
       type: Boolean,
       default: false
     },
-    constants: {
-      type: Object,
-      default: () => ({ forge: [], game: [], java: [] })
-    }
   },
-  data () {
-    return {
-      selection: JSON.parse(JSON.stringify(this.preset)),
-      selectedGame: '',
-      ramTicks: [
+})
+export default class PackVersionDialogComponent extends Vue {
+
+  @Prop({
+    type: String,
+    default: null
+  })
+  pack: any
+
+  @Prop({
+    type: Object,
+    default: () => ({
+      name: null,
+      forgeVersion: null,
+      javaVersion: null,
+      recommended: false,
+      memory: 0,
+      modList: []
+    })
+  })
+  preset: any
+
+  @Prop({
+    type: Object,
+    default: () => ({ forge: [], game: [], java: [] })
+  })
+  constants: any
+
+  $refs: Vue['$refs'] & {
+    form: { validate: () => any }
+  }
+
+      selection = JSON.parse(JSON.stringify(this.preset))
+      selectedGame = ''
+      ramTicks = [
         'Any', '',
         '1 GiB', '',
         '2 GiB', '',
@@ -195,17 +208,15 @@ export default {
         '6 GiB', '',
         '7 GiB', '',
         '8 GiB'
-      ],
-      selectedMod: {},
-      selectedVersion: {},
-      loading: false,
-      mods: [],
-      modVersions: [],
-      versionLoading: false
-    }
-  },
-  computed: {
-    forgeVersionsAvailable () {
+      ]
+      selectedMod = {}
+      selectedVersion: { name: string } = { name: undefined }
+      loading = false
+      mods = []
+      modVersions = []
+      versionLoading = false
+
+    get forgeVersionsAvailable () {
       let gameVersion = this.selectedGame
       let matches = function (it) {
         if (gameVersion === null || gameVersion.length === 0) {
@@ -218,8 +229,8 @@ export default {
 
       let ret = this.constants.forge.filter(matches)
       return ret.sort()
-    },
-    packVersion () {
+    }
+    get packVersion () {
       let ram = this.selection.memory
       if (ram === 0) ram = null
 
@@ -233,26 +244,26 @@ export default {
         modList: this.selection.modList
       }
     }
-  },
-  mounted: function () {
-    this.getMods(it => {
+
+  mounted () {
+    Util.getMods(it => {
       this.mods = it.data
     }, e => {
       console.log(e)
     })
-  },
-  methods: {
+  }
+
     updateVersions () {
-      this.selectedVersion = {}
+      this.selectedVersion = { name: undefined }
       this.versionLoading = true
-      this.getMod(this.selectedMod, it => {
+      Util.getMod(this.selectedMod, it => {
         this.modVersions = it.data.versions
         this.versionLoading = false
       }, e => {
         console.log(e)
         this.versionLoading = false
       })
-    },
+    }
     addMod () {
       let mod = this.selectedMod
       let ver = this.selectedVersion
@@ -266,11 +277,11 @@ export default {
         return
       }
       this.selection.modList.push({ slug: mod, version: ver.name })
-    },
+    }
     delMod (simpleModVersion) {
       let index = this.selection.modList.indexOf(simpleModVersion)
       this.selection.modList.splice(index, 1)
-    },
+    }
     validateName (str) {
       if (!str) {
         return 'Name must not be blank'
@@ -279,7 +290,7 @@ export default {
       } else {
         return true
       }
-    },
+    }
     submit () {
       console.log(this.packVersion)
       if (!this.$refs.form.validate()) {
@@ -287,7 +298,7 @@ export default {
         return
       }
       this.loading = true
-      this.postPackVersion(this.pack, this.packVersion, it => {
+      Util.postPackVersion(this.pack, this.packVersion, it => {
         this.loading = false
         console.log(it)
         this.close()
@@ -295,16 +306,16 @@ export default {
         this.snack(e.response.data.error)
         this.loading = false
       })
-    },
+    }
     close () {
       this.$emit('input', false)
-    },
+    }
     log (msg) {
       console.log(msg)
-    },
+    }
     snack (msg) {
       this.$emit('snack', msg)
     }
-  }
+
 }
 </script>

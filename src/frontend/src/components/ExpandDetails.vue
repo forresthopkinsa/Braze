@@ -84,8 +84,10 @@
   </v-card>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   name: 'ExpandDetails',
   props: {
     rowData: {
@@ -101,5 +103,7 @@ export default {
       default: () => []
     }
   }
+})
+export default class ExpandDetailsComponent extends Vue {
 }
 </script>

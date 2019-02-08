@@ -15,8 +15,10 @@
   </v-snackbar>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   name: 'Snackbar',
   props: {
     value: {
@@ -35,5 +37,7 @@ export default {
       this.$emit('input', newValue)
     }
   }
+})
+export default class SnackbarComponent extends Vue {
 }
 </script>

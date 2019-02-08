@@ -14,8 +14,10 @@
   </v-card>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   name: 'RootCard',
   props: {
     cardTitle: {
@@ -23,10 +25,8 @@ export default {
       default: 'cardTitle'
     }
   },
-  data () {
-    return {
-      search: ''
-    }
-  }
+})
+export default class RootCardComponent extends Vue {
+      search = ''
 }
 </script>
