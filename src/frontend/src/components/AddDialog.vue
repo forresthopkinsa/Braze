@@ -1,39 +1,25 @@
 <template>
-  <v-dialog
-    :value="value"
-    width="50%"
-    @input="$emit('input', $event)"
-  >
+  <v-dialog :value="value" width="50%" @input="$emit('input', $event)">
     <v-card>
-      <v-card-title
-        class="title grey lighten-4"
-      >
+      <v-card-title class="title grey lighten-4">
         {{ title }}
       </v-card-title>
       <v-form class="pa-4">
         <v-text-field
           v-for="input in inputs"
-          v-model="input.value"
           :key="input.name"
+          v-model="input.value"
           :prepend-icon="input.icon"
           :placeholder="input.name"
           :disabled="input.readonly"
         />
       </v-form>
       <v-card-actions>
-        <v-spacer/>
-        <v-btn
-          flat
-          @click="close"
-        >
+        <v-spacer />
+        <v-btn flat @click="close">
           Cancel
         </v-btn>
-        <v-badge
-          v-model="error"
-          left
-          color="error"
-          overlap
-        >
+        <v-badge v-model="error" left color="error" overlap>
           <v-btn
             :loading="loading"
             flat
@@ -42,11 +28,7 @@
           >
             Save
           </v-btn>
-          <v-icon
-            slot="badge"
-            dark
-            small
-          >
+          <v-icon slot="badge" dark small>
             error
           </v-icon>
         </v-badge>
@@ -56,46 +38,46 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component({
   name: 'AddDialog',
   props: {
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
     title: {
       type: String,
-      default: 'title'
+      default: 'title',
     },
     inputs: {
       type: Array,
-      default: () => [ { name: 'Name', key: 'name', icon: 'error', value: '' } ]
+      default: () => [{ name: 'Name', key: 'name', icon: 'error', value: '' }],
     },
     loading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     error: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   watch: {
-    value: function (newValue, oldValue) {
+    value(newValue, oldValue) {
       if (!newValue) {
         this.inputs.forEach(it => {
-          it.value = ''
-        })
-        this.error = false
+          it.value = '';
+        });
+        this.error = false;
       }
-    }
-  }
+    },
+  },
 })
 export default class AddDialogComponent extends Vue {
-    close () {
-      this.$emit('input', false)
-    }
+  close() {
+    this.$emit('input', false);
+  }
 }
 </script>

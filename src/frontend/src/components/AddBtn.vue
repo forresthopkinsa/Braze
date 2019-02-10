@@ -1,22 +1,14 @@
 <template>
-  <v-btn
-    fab
-    bottom
-    right
-    fixed
-    color="accent"
-    @click="$emit('click')"
-  >
+  <v-btn fab bottom right fixed color="accent" @click="$emit('click')">
     <v-icon>add</v-icon>
   </v-btn>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component({
-  name: 'AddBtn'
+  name: 'AddBtn',
 })
-export default class AddBtnComponent extends Vue {
-}
+export default class AddBtnComponent extends Vue {}
 </script>
