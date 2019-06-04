@@ -137,9 +137,9 @@ import IncludedList from '@/components/IncludedList.vue';
 export default class PackVersionDialogComponent extends Vue {
   @Prop({
     type: String,
-    default: null,
+    default: '',
   })
-  pack: any;
+  pack!: string;
 
   @Prop({
     type: Object,
@@ -152,57 +152,51 @@ export default class PackVersionDialogComponent extends Vue {
       modList: [],
     }),
   })
-  preset: any;
+  preset!: PackVersion;
 
   @Prop({
     type: Object,
     default: () => ({ forge: [], game: [], java: [] }),
   })
-  constants: any;
+  constants!: Constants;
 
-  $refs: Vue['$refs'] & {
-    form: { validate: () => any };
+  $refs!: Vue['$refs'] & {
+    form: { validate: () => boolean };
   };
 
-  selection = JSON.parse(JSON.stringify(this.preset));
+  selection: PackVersion = JSON.parse(JSON.stringify(this.preset));
 
   selectedGame = '';
 
   ramTicks = [
     'Any',
-    '',
     '1 GiB',
-    '',
     '2 GiB',
-    '',
     '3 GiB',
-    '',
     '4 GiB',
-    '',
     '5 GiB',
-    '',
     '6 GiB',
-    '',
     '7 GiB',
-    '',
     '8 GiB',
-  ];
+  ]
+    .flatMap(item => [item, ''])
+    .slice(0, -1);
 
-  selectedMod = {};
+  selectedMod = '';
 
-  selectedVersion: { name: string } = { name: undefined };
+  selectedVersion: { name?: string } = { name: undefined };
 
   loading = false;
 
-  mods = [];
+  mods: SimpleMod[] = [];
 
-  modVersions = [];
+  modVersions: IndexedModVersion[] = [];
 
   versionLoading = false;
 
   get forgeVersionsAvailable() {
     const gameVersion = this.selectedGame;
-    const matches = it => {
+    const matches = (it: ForgeConstant) => {
       if (gameVersion === null || gameVersion.length === 0) {
         return true;
       }
@@ -271,12 +265,12 @@ export default class PackVersionDialogComponent extends Vue {
     this.selection.modList.push({ slug: mod, version: ver.name });
   }
 
-  delMod(simpleModVersion) {
+  delMod(simpleModVersion: SimpleModVersion) {
     const index = this.selection.modList.indexOf(simpleModVersion);
     this.selection.modList.splice(index, 1);
   }
 
-  static validateName(str) {
+  static validateName(str: string) {
     if (!str) {
       return 'Name must not be blank';
     }
@@ -302,7 +296,7 @@ export default class PackVersionDialogComponent extends Vue {
         this.close();
       },
       e => {
-        this.snack(e.response.data.error);
+        this.snack(e.response ? e.response.data.error : 'HTTP error');
         this.loading = false;
       }
     );
@@ -312,7 +306,7 @@ export default class PackVersionDialogComponent extends Vue {
     this.$emit('input', false);
   }
 
-  snack(msg) {
+  snack(msg: string) {
     this.$emit('snack', msg);
   }
 }

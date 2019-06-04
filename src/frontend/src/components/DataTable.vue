@@ -25,6 +25,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { BasicElement } from '../model';
+
+export interface DataTableItem {
+  item: BasicElement;
+  index: number;
+  selected: boolean;
+  expanded: boolean;
+}
 
 @Component({
   name: 'DataTable',
@@ -56,12 +64,7 @@ export default class DataTableComponent extends Vue {
       },
     ],
   })
-  items: {
-    slug: string;
-    name: string;
-    author: string;
-    description: string;
-  }[];
+  items!: BasicElement[];
 
   pagination = {
     rowsPerPage: document.documentElement.clientHeight >= 850 ? 10 : 5,
@@ -78,7 +81,7 @@ export default class DataTableComponent extends Vue {
     });
   }
 
-  expand(scope) {
+  expand(scope: DataTableItem) {
     scope.expanded = !scope.expanded;
     console.log(scope);
     this.$emit('expand', {

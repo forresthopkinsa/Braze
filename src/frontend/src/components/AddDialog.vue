@@ -38,7 +38,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { DynamicInput } from '../model';
 
 @Component({
   name: 'AddDialog',
@@ -51,31 +52,35 @@ import { Component, Vue } from 'vue-property-decorator';
       type: String,
       default: 'title',
     },
-    inputs: {
-      type: Array,
-      default: () => [{ name: 'Name', key: 'name', icon: 'error', value: '' }],
-    },
     loading: {
       type: Boolean,
       default: false,
     },
-    error: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  watch: {
-    value(newValue, oldValue) {
-      if (!newValue) {
-        this.inputs.forEach(it => {
-          it.value = '';
-        });
-        this.error = false;
-      }
-    },
   },
 })
 export default class AddDialogComponent extends Vue {
+  @Prop({
+    type: Array,
+    default: () => [{ name: 'Name', key: 'name', icon: 'error', value: '' }],
+  })
+  inputs!: DynamicInput[];
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  error!: boolean;
+
+  @Watch('value')
+  onValueChanged(newValue: boolean) {
+    if (!newValue) {
+      this.inputs.forEach(it => {
+        it.value = '';
+      });
+      this.error = false;
+    }
+  }
+
   close() {
     this.$emit('input', false);
   }

@@ -41,7 +41,9 @@ import AddBtn from '@/components/AddBtn.vue';
 import AddDialog from '@/components/AddDialog.vue';
 import Snackbar from '@/components/Snackbar.vue';
 import ExpandDetails from '@/components/ExpandDetails.vue';
+import { AxiosError, AxiosResponse } from 'axios';
 import * as Util from '../util';
+import { DynamicInput, Expansion } from '../model';
 
 @Component({
   name: 'ModTable',
@@ -55,7 +57,7 @@ import * as Util from '../util';
   },
 })
 export default class ModTableComponent extends Vue {
-  mods = [];
+  mods: SimpleMod[] = [];
 
   headers = [
     { text: 'Name', value: 'name' },
@@ -78,7 +80,7 @@ export default class ModTableComponent extends Vue {
 
   versions = [];
 
-  inputs = [
+  inputs: DynamicInput[] = [
     { name: 'Name', key: 'name', icon: 'title', value: '' },
     { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
     { name: 'Author', key: 'author', icon: 'face', value: '' },
@@ -100,51 +102,47 @@ export default class ModTableComponent extends Vue {
     this.tableLoading = true;
 
     Util.getMods(
-      (it: any) => {
+      (it: AxiosResponse<SimpleMod[]>) => {
         this.mods = it.data;
         this.tableLoading = false;
       },
-      (e: Error) => {
+      (e: AxiosError) => {
         this.tableLoading = false;
         this.snack('error', e.message);
       }
     );
   }
 
-  expandHandler(expansion: any) {
+  expandHandler(expansion: Expansion) {
     const { index } = expansion;
     this.$set(this.versionsLoading, index, true);
 
     Util.getMod(
       expansion.slug,
-      (it: any) => {
+      (it: AxiosResponse<Mod>) => {
         this.$set(this.versions, index, it.data.versions);
         this.versionsLoading.splice(index, 1, false);
       },
-      (e: Error) => {
+      (e: AxiosError) => {
         console.log(e);
       }
     );
   }
 
-  addMod(inputs: any) {
+  addMod(inputs: DynamicInput[]) {
     this.saveLoading = true;
-    const mod: any = {};
 
-    for (const i in inputs) {
-      const input = inputs[i];
-      mod[input.key] = input.value;
-    }
+    const mod: SimpleMod = Util.inputsToObject(inputs);
 
     Util.postMod(
       mod,
-      (it: any) => {
+      (it: AxiosResponse<Mod>) => {
         console.log(it);
         this.updateTable();
         this.saveLoading = false;
         this.dialog = false;
       },
-      (e: Error) => {
+      (e: AxiosError) => {
         this.saveLoading = false;
         this.error = true;
         this.snack('error', e.message);

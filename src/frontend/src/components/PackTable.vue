@@ -55,6 +55,22 @@ import Snackbar from '@/components/Snackbar.vue';
 import ExpandDetails from '@/components/ExpandDetails.vue';
 import PackVersionDialog from '@/components/PackVersionDialog.vue';
 import * as Util from '../util';
+import { DynamicInput, Expansion } from '../model';
+
+type LoosePackVersion = Util.Overwrite<
+  PackVersion,
+  {
+    forgeVersion: ForgeVersion | null;
+    name: string | null;
+  }
+>;
+
+interface VersionDialog {
+  display: boolean;
+  pack: string | null;
+  version: LoosePackVersion | null;
+  key: number;
+}
 
 @Component({
   name: 'PackTable',
@@ -69,14 +85,14 @@ import * as Util from '../util';
   },
 })
 export default class PackTable extends Vue {
-  addVersionDialog = {
+  addVersionDialog: VersionDialog = {
     display: false,
     pack: null,
-    version: {},
+    version: null,
     key: 0,
   };
 
-  packs = [];
+  packs: SimplePack[] = [];
 
   headers = [
     { text: 'Name', value: 'name' },
@@ -92,15 +108,15 @@ export default class PackTable extends Vue {
 
   dialogError = false;
 
-  inputs = [];
+  inputs: DynamicInput[] = [];
 
   snackbar = { display: false, color: 'primary', text: '[default]' };
 
-  versionsLoading = [];
+  versionsLoading: boolean[] = [];
 
   versions = [];
 
-  constants = { forge: [], game: [], java: [] };
+  constants: Constants = { forge: [], game: [], java: [] };
 
   mounted() {
     this.updateTable();
@@ -114,14 +130,14 @@ export default class PackTable extends Vue {
     );
   }
 
-  editVersion(slug, version) {
+  editVersion(slug: string, version: PackVersion) {
     this.addVersionDialog.key += 1;
     this.addVersionDialog.pack = slug;
     this.addVersionDialog.version = version;
     this.addVersionDialog.display = true;
   }
 
-  addVersion(slug) {
+  addVersion(slug: string) {
     this.addVersionDialog.key += 1;
     this.addVersionDialog.pack = slug;
     this.addVersionDialog.version = {
@@ -150,7 +166,7 @@ export default class PackTable extends Vue {
     );
   }
 
-  expandHandler(expansion) {
+  expandHandler(expansion: Expansion) {
     const { index } = expansion;
     this.$set(this.versionsLoading, index, true);
 
@@ -183,7 +199,7 @@ export default class PackTable extends Vue {
     this.dialog = true;
   }
 
-  editPack(data) {
+  editPack(data: SimplePack) {
     this.inputs = [
       { name: 'Name', key: 'name', icon: 'title', value: data.name },
       {
@@ -211,14 +227,10 @@ export default class PackTable extends Vue {
     this.dialog = true;
   }
 
-  submitPack(inputs) {
+  submitPack(inputs: DynamicInput[]) {
     this.dialogLoading = true;
-    const pack = {};
 
-    for (const i in inputs) {
-      const input = inputs[i];
-      pack[input.key] = input.value;
-    }
+    const pack: SimplePack = Util.inputsToObject(inputs);
 
     Util.postPack(
       pack,
@@ -236,7 +248,7 @@ export default class PackTable extends Vue {
     );
   }
 
-  snack(color, text) {
+  snack(color: string, text: string) {
     this.snackbar.color = color;
     this.snackbar.text = text;
     this.snackbar.display = true;

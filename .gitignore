@@ -197,4 +197,5 @@ typings/
 
 ### Manually ignored files
 /src/main/resources/public/
+/src/frontend/src/braze-model.d.ts
 **/*.mv.db
