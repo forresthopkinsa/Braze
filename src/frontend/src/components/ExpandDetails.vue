@@ -55,24 +55,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { RowData } from '../model';
 
 @Component({
   name: 'ExpandDetails',
-  props: {
-    rowData: {
-      type: Object,
-      default: () => ({ slug: '', description: '', donate: '' }),
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    versions: {
-      type: Array,
-      default: () => [],
-    },
-  },
 })
-export default class ExpandDetailsComponent extends Vue {}
+export default class ExpandDetailsComponent extends Vue {
+  @Prop({
+    type: Object,
+    default: () => ({ slug: '', description: '', donate: '' }),
+  })
+  readonly rowData!: RowData;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  readonly loading!: boolean;
+
+  @Prop({
+    type: Array,
+    default: () => [],
+  })
+  readonly versions!: [];
+}
 </script>

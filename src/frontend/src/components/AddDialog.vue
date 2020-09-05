@@ -43,22 +43,26 @@ import { DynamicInput } from '../model';
 
 @Component({
   name: 'AddDialog',
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-    title: {
-      type: String,
-      default: 'title',
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
 })
 export default class AddDialogComponent extends Vue {
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  readonly value!: boolean;
+
+  @Prop({
+    type: String,
+    default: 'title',
+  })
+  readonly title!: string;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  readonly loading!: boolean;
+
   @Prop({
     type: Array,
     default: () => [{ name: 'Name', key: 'name', icon: 'error', value: '' }],

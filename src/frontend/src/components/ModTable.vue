@@ -43,7 +43,7 @@ import Snackbar from '@/components/Snackbar.vue';
 import ExpandDetails from '@/components/ExpandDetails.vue';
 import { AxiosError, AxiosResponse } from 'axios';
 import * as Util from '../util';
-import { DynamicInput, Expansion } from '../model';
+import { DynamicInput, Expansion, SnackbarState } from '../model';
 
 @Component({
   name: 'ModTable',
@@ -68,7 +68,7 @@ export default class ModTableComponent extends Vue {
 
   dialog = false;
 
-  snackbar = { display: false, color: '', text: '' };
+  snackbar: SnackbarState = { display: false, color: '', text: '' };
 
   error = false;
 
@@ -78,7 +78,7 @@ export default class ModTableComponent extends Vue {
 
   versionsLoading: boolean[] = [];
 
-  versions = [];
+  versions: IndexedModVersion[][] = [];
 
   inputs: DynamicInput[] = [
     { name: 'Name', key: 'name', icon: 'title', value: '' },

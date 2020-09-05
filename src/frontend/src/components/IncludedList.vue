@@ -25,18 +25,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
   name: 'IncludedList',
-  props: {
-    items: {
-      type: Array,
-      default: () => [{ slug: 'NULL', version: 'NULL' }],
-    },
-  },
 })
 export default class IncludedListComponent extends Vue {
+  @Prop({
+    type: Array,
+    default: () => [{ slug: 'NULL', version: 'NULL' }],
+  })
+  readonly items!: { slug: string; version: string }[];
+
   static doNothing() {}
 }
 </script>

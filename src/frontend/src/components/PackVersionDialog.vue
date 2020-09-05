@@ -123,16 +123,6 @@ import IncludedList from '@/components/IncludedList.vue';
 @Component({
   name: 'PackVersionDialog',
   components: { IncludedList },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-    error: {
-      type: Boolean,
-      default: false,
-    },
-  },
 })
 export default class PackVersionDialogComponent extends Vue {
   @Prop({
@@ -159,6 +149,18 @@ export default class PackVersionDialogComponent extends Vue {
     default: () => ({ forge: [], game: [], java: [] }),
   })
   constants!: Constants;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  readonly value!: boolean;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  readonly error!: boolean;
 
   $refs!: Vue['$refs'] & {
     form: { validate: () => boolean };

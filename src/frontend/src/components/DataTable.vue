@@ -36,20 +36,6 @@ export interface DataTableItem {
 
 @Component({
   name: 'DataTable',
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    search: {
-      type: String,
-      default: 'search',
-    },
-    headers: {
-      type: Array,
-      default: () => [{ text: 'text', value: 'value' }],
-    },
-  },
 })
 export default class DataTableComponent extends Vue {
   @Prop({
@@ -65,6 +51,24 @@ export default class DataTableComponent extends Vue {
     ],
   })
   items!: BasicElement[];
+
+  @Prop({
+    type: Array,
+    default: () => [{ text: 'text', value: 'value' }],
+  })
+  readonly headers!: { text: string; value: string }[];
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  readonly loading!: boolean;
+
+  @Prop({
+    type: String,
+    default: 'search',
+  })
+  readonly search!: string;
 
   pagination = {
     rowsPerPage: document.documentElement.clientHeight >= 850 ? 10 : 5,

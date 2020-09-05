@@ -18,3 +18,15 @@ export interface BasicElement {
   author: string;
   description: string;
 }
+
+export interface SnackbarState {
+  display: boolean;
+  color: string;
+  text: string;
+}
+
+export interface RowData {
+  slug: string;
+  description: string;
+  donate: string;
+}

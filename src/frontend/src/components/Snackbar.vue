@@ -8,27 +8,28 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { SnackbarState } from '../model';
 
 @Component({
   name: 'Snackbar',
-  props: {
-    value: {
-      type: Object,
-      default() {
-        return {
-          display: false,
-          color: 'primary',
-          text: '[default]',
-        };
-      },
-    },
-  },
-  watch: {
-    value(oldValue, newValue) {
-      this.$emit('input', newValue);
-    },
-  },
 })
-export default class SnackbarComponent extends Vue {}
+export default class SnackbarComponent extends Vue {
+  @Prop({
+    type: Object,
+    default() {
+      return {
+        display: false,
+        color: 'primary',
+        text: '[default]',
+      };
+    },
+  })
+  readonly value!: SnackbarState;
+
+  @Watch('value')
+  onValueChanged(oldValue: SnackbarState, newValue: SnackbarState) {
+    this.$emit('input', newValue);
+  }
+}
 </script>

@@ -11,18 +11,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
   name: 'RootCard',
-  props: {
-    cardTitle: {
-      type: String,
-      default: 'cardTitle',
-    },
-  },
+  props: {},
 })
 export default class RootCardComponent extends Vue {
+  @Prop({
+    type: String,
+    default: 'cardTitle',
+  })
+  readonly cardTitle!: string;
+
   search = '';
 }
 </script>
