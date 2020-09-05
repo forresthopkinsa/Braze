@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "es5", "es2015", "esnext.array"],
+    "module": "es2015",
+    "target": "es5",
+    "strict": true,
+    "sourceMap": true,
+    "outDir": "./built/",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,8 +1,10 @@
+@file:Suppress("HasPlatformType", "PropertyName")
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     var kotlinVersion: String by extra
-    kotlinVersion = "1.3.20"
+    kotlinVersion = "1.3.21"
 
     repositories {
         mavenCentral()
@@ -20,9 +22,9 @@ plugins {
     idea
     maven
 
-    kotlin("jvm") version "1.3.20"
-    kotlin("plugin.spring") version "1.3.20"
-    kotlin("plugin.jpa") version "1.3.20"
+    kotlin("jvm") version "1.3.21"
+    kotlin("plugin.spring") version "1.3.21"
+    kotlin("plugin.jpa") version "1.3.21"
 
     id("org.springframework.boot") version "2.0.4.RELEASE"
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
@@ -36,6 +38,7 @@ val retrofitVersion = "2.4.0"
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -55,10 +58,14 @@ dependencies {
 
     compile("com.h2database", "h2")
 
+    compile("com.github.ntrrgc", "ts-generator", "1.1.1")
+
     testCompile("org.testng", "testng", "6.14.3")
     testCompile("org.springframework", "spring-test")
     testCompile("org.springframework.boot", "spring-boot-starter-test")
 }
+
+// todo: replace with tasks{} block
 
 val bootJar by tasks.getting
 val assemble by tasks.getting
@@ -74,11 +81,23 @@ val cleanStatic by tasks.creating(Delete::class) {
     delete("src/main/resources/public")
 }
 
+val generateDefinitions by tasks.creating(JavaExec::class) {
+    classpath = sourceSets["main"].runtimeClasspath
+    main = "com.forresthopkinsa.braze.model.TypeDefGeneratorKt"
+    standardOutput = File(buildDir, "braze-model.d.ts").outputStream()
+}
+
+val copyDefinitions by tasks.creating(Copy::class) {
+    dependsOn(generateDefinitions)
+    from(File(buildDir, "braze-model.d.ts"))
+    destinationDir = File(projectDir, "src/frontend/src")
+}
+
 npm_run_build.dependsOn(cleanStatic)
 
 bootJar.mustRunAfter(npm_run_build)
 
-assemble.dependsOn(npm_run_build)
+assemble.dependsOn(npm_run_build, copyDefinitions)
 
 install.dependsOn(assemble)
 
@@ -88,6 +107,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useTestNG()
+}
+
+springBoot {
+    mainClassName = "com.forresthopkinsa.braze.spring.ApplicationKt"
 }
 
 node {

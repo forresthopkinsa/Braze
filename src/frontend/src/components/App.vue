@@ -1,10 +1,6 @@
 <template>
   <v-app id="app">
-    <v-navigation-drawer
-      v-model="drawer"
-      clipped
-      app
-    >
+    <v-navigation-drawer v-model="drawer" clipped app>
       <v-list>
         <v-list-tile
           v-for="page in pages"
@@ -24,49 +20,39 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar
-      app
-      dark
-      clipped-left
-      color="primary"
-    >
-      <v-toolbar-side-icon @click="drawer = !drawer"/>
+    <v-toolbar app dark clipped-left color="primary">
+      <v-toolbar-side-icon @click="drawer = !drawer" />
       <v-toolbar-title>Braze</v-toolbar-title>
     </v-toolbar>
 
     <v-content>
-      <router-view/>
+      <router-view />
     </v-content>
 
-    <v-footer
-      app
-      dark
-      color="secondary"
-    >
+    <v-footer app dark color="secondary">
       <v-flex text-xs-center>
         <span>Open Source</span>
       </v-flex>
     </v-footer>
-
   </v-app>
 </template>
 
-<script>
-import UploadButton from 'vuetify-upload-button'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import UploadButton from 'vuetify-upload-button';
 
-export default {
+@Component({
   name: 'App',
   components: {
-    'upload-btn': UploadButton
+    'upload-btn': UploadButton,
   },
-  data () {
-    return {
-      drawer: (document.documentElement.clientWidth >= 1264),
-      pages: [
-        { title: 'Mods', icon: 'folder', url: '/mods' },
-        { title: 'Packs', icon: 'apps', url: '/packs' }
-      ]
-    }
-  }
+})
+export default class AppComponent extends Vue {
+  drawer = document.documentElement.clientWidth >= 1264;
+
+  pages = [
+    { title: 'Mods', icon: 'folder', url: '/mods' },
+    { title: 'Packs', icon: 'apps', url: '/packs' },
+  ];
 }
 </script>

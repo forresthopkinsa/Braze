@@ -16,11 +16,7 @@
         </v-flex>
       </v-layout>
       <v-list-tile-action>
-        <v-btn
-          icon
-          ripple
-          @click="$emit('delete', item)"
-        >
+        <v-btn icon ripple @click="$emit('delete', item)">
           <v-icon>delete</v-icon>
         </v-btn>
       </v-list-tile-action>
@@ -28,17 +24,19 @@
   </v-list>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component({
   name: 'IncludedList',
   props: {
     items: {
       type: Array,
-      default: () => [ { slug: 'NULL', version: 'NULL' } ]
-    }
+      default: () => [{ slug: 'NULL', version: 'NULL' }],
+    },
   },
-  methods: {
-    doNothing () { }
-  }
+})
+export default class IncludedListComponent extends Vue {
+  static doNothing() {}
 }
 </script>

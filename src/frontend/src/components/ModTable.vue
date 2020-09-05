@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <root-card card-title="Mod Library">
       <data-table
         slot-scope="card"
@@ -31,103 +30,130 @@
     />
 
     <snackbar v-model="snackbar" />
-
   </v-container>
 </template>
 
-<script>
-import RootCard from '@/components/RootCard'
-import DataTable from '@/components/DataTable'
-import AddBtn from '@/components/AddBtn'
-import AddDialog from '@/components/AddDialog'
-import Snackbar from '@/components/Snackbar'
-import ExpandDetails from '@/components/ExpandDetails'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import RootCard from '@/components/RootCard.vue';
+import DataTable from '@/components/DataTable.vue';
+import AddBtn from '@/components/AddBtn.vue';
+import AddDialog from '@/components/AddDialog.vue';
+import Snackbar from '@/components/Snackbar.vue';
+import ExpandDetails from '@/components/ExpandDetails.vue';
+import { AxiosError, AxiosResponse } from 'axios';
+import * as Util from '../util';
+import { DynamicInput, Expansion } from '../model';
 
-export default {
+@Component({
   name: 'ModTable',
-  components: { ExpandDetails, Snackbar, AddDialog, AddBtn, DataTable, RootCard },
-  data () {
-    return {
-      mods: [],
-      headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'Slug', value: 'slug' },
-        { text: 'Author', value: 'author' },
-        { text: 'Description', value: 'description' }
-      ],
-      dialog: false,
-      snackbar: { display: false, color: '', text: '' },
-      error: false,
-      tableLoading: false,
-      saveLoading: false,
-      versionsLoading: [],
-      versions: [],
-      inputs: [
-        { name: 'Name', key: 'name', icon: 'title', value: '' },
-        { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
-        { name: 'Author', key: 'author', icon: 'face', value: '' },
-        { name: 'Description', key: 'description', icon: 'insert_comment', value: '' },
-        { name: 'Link', key: 'link', icon: 'link', value: '' },
-        { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' }
-      ]
-    }
+  components: {
+    ExpandDetails,
+    Snackbar,
+    AddDialog,
+    DataTable,
+    AddBtn,
+    RootCard,
   },
+})
+export default class ModTableComponent extends Vue {
+  mods: SimpleMod[] = [];
 
-  mounted () {
-    this.updateTable()
-  },
+  headers = [
+    { text: 'Name', value: 'name' },
+    { text: 'Slug', value: 'slug' },
+    { text: 'Author', value: 'author' },
+    { text: 'Description', value: 'description' },
+  ];
 
-  methods: {
-    updateTable () {
-      this.tableLoading = true
+  dialog = false;
 
-      this.getMods(it => {
-        this.mods = it.data
-        this.tableLoading = false
-      }, e => {
-        this.tableLoading = false
-        this.snack('error', e.message)
-      })
+  snackbar = { display: false, color: '', text: '' };
+
+  error = false;
+
+  tableLoading = false;
+
+  saveLoading = false;
+
+  versionsLoading: boolean[] = [];
+
+  versions = [];
+
+  inputs: DynamicInput[] = [
+    { name: 'Name', key: 'name', icon: 'title', value: '' },
+    { name: 'Slug', key: 'slug', icon: 'fingerprint', value: '' },
+    { name: 'Author', key: 'author', icon: 'face', value: '' },
+    {
+      name: 'Description',
+      key: 'description',
+      icon: 'insert_comment',
+      value: '',
     },
+    { name: 'Link', key: 'link', icon: 'link', value: '' },
+    { name: 'Donate', key: 'donate', icon: 'attach_money', value: '' },
+  ];
 
-    expandHandler (expansion) {
-      let index = expansion.index
-      this.$set(this.versionsLoading, index, true)
+  mounted() {
+    this.updateTable();
+  }
 
-      this.getMod(expansion.slug, it => {
-        this.$set(this.versions, index, it.data.versions)
-        this.versionsLoading.splice(index, 1, false)
-      }, e => {
-        console.log(e)
-      })
-    },
+  updateTable() {
+    this.tableLoading = true;
 
-    addMod (inputs) {
-      this.saveLoading = true
-      let mod = {}
-
-      for (let i in inputs) {
-        let input = inputs[i]
-        mod[input.key] = input.value
+    Util.getMods(
+      (it: AxiosResponse<SimpleMod[]>) => {
+        this.mods = it.data;
+        this.tableLoading = false;
+      },
+      (e: AxiosError) => {
+        this.tableLoading = false;
+        this.snack('error', e.message);
       }
+    );
+  }
 
-      this.postMod(mod, it => {
-        console.log(it)
-        this.updateTable()
-        this.saveLoading = false
-        this.dialog = false
-      }, e => {
-        this.saveLoading = false
-        this.error = true
-        this.snack('error', e.message)
-      })
-    },
+  expandHandler(expansion: Expansion) {
+    const { index } = expansion;
+    this.$set(this.versionsLoading, index, true);
 
-    snack (color, text) {
-      this.snackbar.color = color
-      this.snackbar.text = text
-      this.snackbar.display = true
-    }
+    Util.getMod(
+      expansion.slug,
+      (it: AxiosResponse<Mod>) => {
+        this.$set(this.versions, index, it.data.versions);
+        this.versionsLoading.splice(index, 1, false);
+      },
+      (e: AxiosError) => {
+        console.log(e);
+      }
+    );
+  }
+
+  addMod(inputs: DynamicInput[]) {
+    this.saveLoading = true;
+
+    const mod: SimpleMod = Util.inputsToObject(inputs);
+
+    Util.postMod(
+      mod,
+      (it: AxiosResponse<Mod>) => {
+        console.log(it);
+        this.updateTable();
+        this.saveLoading = false;
+        this.dialog = false;
+      },
+      (e: AxiosError) => {
+        this.saveLoading = false;
+        this.error = true;
+        this.snack('error', e.message);
+      }
+    );
+  }
+
+  snack(color: string, text: string) {
+    this.snackbar.color = color;
+    this.snackbar.text = text;
+    this.snackbar.display = true;
   }
 }
 </script>
